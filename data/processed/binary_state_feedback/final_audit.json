@@ -1,0 +1,72 @@
+{
+  "BER_optimal_sensitivity_sizes": [
+    "N192_M96"
+  ],
+  "all_passed": true,
+  "checks": {
+    "all_six_figure_files_exist_and_nonempty": true,
+    "best_kappas_match_selection_file": true,
+    "highstat_has_3_sizes_x_10_seeds_x_3_snr_rows": true,
+    "highstat_has_3_sizes_x_3_snr_rows": true,
+    "kappa_zero_matches_existing_2000_trial_pSA_exactly": true,
+    "manuscript_files_unchanged_since_parameter_record": true,
+    "primary_paired_statistics_complete": true,
+    "report_exists_and_nonempty": true,
+    "sensitivity_by_ebno_complete_for_differing_sizes": true,
+    "sensitivity_by_seed_complete_for_differing_sizes": true,
+    "sensitivity_paired_statistics_complete": true,
+    "sensitivity_selection_has_all_sizes": true,
+    "sweep_by_ebno_has_27_x_3_rows": true,
+    "sweep_by_seed_has_27_x_8_x_3_rows": true,
+    "sweep_grid_exact": true,
+    "sweep_has_3_sizes_x_9_kappas": true,
+    "trajectory_condition_summary_has_6_rows": true,
+    "trajectory_has_2_sizes_x_3_methods_x_200_rows": true,
+    "validation_all_passed": true
+  },
+  "created_utc": "2026-08-30T09:25:41.000242+00:00",
+  "current_manuscript_sha256": {
+    "main.pdf": "deccee4f585efe3e2152680f5a057a49f6ce09e10410bd5f34ac691f96be8549",
+    "main.tex": "daf16f0212ee726e7e1efe0ee400ebb9f85455a81ac91163bc6d48535b59ab6b",
+    "supplement.pdf": "c4c8ef8049d7e2210c68f875070140485ad0a9a23d03787efb8a19b5db86e21c",
+    "supplement.tex": "fd15ecd31396e8c89e251bba06ba5aeadd1af6ec94d000031c62fa46d391977e"
+  },
+  "kappa_zero_minus_existing_pSA": {
+    "N192_M96": {
+      "mean_BER": 0.0,
+      "mean_FER": 0.0,
+      "mean_syndrome_violation": 0.0,
+      "score": 0.0
+    },
+    "N288_M144": {
+      "mean_BER": 0.0,
+      "mean_FER": 0.0,
+      "mean_syndrome_violation": 0.0,
+      "score": 0.0
+    },
+    "N96_M48": {
+      "mean_BER": 0.0,
+      "mean_FER": 0.0,
+      "mean_syndrome_violation": 0.0,
+      "score": 0.0
+    }
+  },
+  "primary_best_kappas": {
+    "N192_M96": 0.5,
+    "N288_M144": 0.75,
+    "N96_M48": 0.25
+  },
+  "row_counts": {
+    "binary_highstat_by_ebno": 9,
+    "binary_highstat_by_seed": 90,
+    "paired_statistics": 48,
+    "sensitivity_by_ebno": 3,
+    "sensitivity_by_seed": 30,
+    "sensitivity_paired_statistics": 8,
+    "sweep": 27,
+    "sweep_by_ebno": 81,
+    "sweep_by_seed": 648,
+    "trajectory_conditions": 6,
+    "trajectory_raw": 1200
+  }
+}

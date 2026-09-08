@@ -1,0 +1,390 @@
+\documentclass[aps,prapplied,reprint,superscriptaddress,longbibliography,floatfix]{revtex4-2}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb,bm}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{xcolor}
+\usepackage[hidelinks]{hyperref}
+
+\setcounter{dbltopnumber}{2}
+\renewcommand{\dbltopfraction}{0.95}
+\renewcommand{\dblfloatpagefraction}{0.80}
+\renewcommand{\textfraction}{0.05}
+
+\graphicspath{{figures/}}
+\newcommand{\psa}{pSA}
+\newcommand{\lpsa}{$\lambda$-pSA}
+\newcommand{\tpsa}{$\tau$-pSA}
+\newcommand{\sgn}{\operatorname{sgn}}
+\newcommand{\E}{\mathbb{E}}
+
+\begin{document}
+
+\title{Bit-Aligned Temporal Reinforcement in Probabilistic-Bit Dynamics for Robust LDPC Decoding}
+
+\author{Naoya Onizawa}
+\affiliation{Research Institute of Electrical Communication, Tohoku University, Sendai 980--8577, Japan}
+\thanks{Corresponding-author e-mail address to be inserted before submission.}
+
+\date{August 30, 2026}
+
+\begin{abstract}
+Probabilistic bits provide a physical and algorithmic primitive for stochastic inference, but highly parallel updates can alter their collective dynamics.  We study random-regular $(3,6)$ low-density parity-check (LDPC) decoding under Jacobi-type p-bit annealing with stochastic partial activation.  An additive response-path rule stores each bit's saturated response and reuses it before stochastic readout.  On representative codes of block length 96, 192, and 288, independently optimized high-statistics experiments reduce bit-error rate relative to independently optimized memoryless probabilistic simulated annealing by 33.5\%, 74.8\%, and 81.8\%, respectively.  Static gain, normalized averaging, response shuffling, and a same-bit binary-state feedback control with a separately tuned coefficient under the same nonmemory parameters do not reproduce the saturated-response benefit.  Trajectories identify acquisition of the channel-consistent valid-codeword basin followed by improved post-acquisition stability; the acquisition advantage persists from random and channel-hard-decision starts under the tested conditions.  Fixed additive packages also outperform separately optimized pSA-specific packages transferred without per-code retuning in bit- and frame-error rate for all 30 independent code realizations.  The computational effect of temporal state therefore depends on what is stored and how it is returned to the stochastic dynamics.
+\end{abstract}
+
+\maketitle
+
+\section{Introduction}
+\label{sec:introduction}
+
+Probabilistic bits (p-bits) couple a binary stochastic output to a continuously tunable response and provide a hardware-oriented primitive for invertible logic, sampling, and physics-inspired optimization \cite{camsari2017prx,faria2017lmag,borders2019nature}.  Architectures have scaled this concept from stochastic magnetic junctions to autonomous coprocessors and sparse probabilistic Ising machines \cite{sutton2020access,aadit2022natureelectronics,chowdhury2023fullstack}.  Update organization is part of the algorithm: schedules, partial activation, and the degree of simultaneous commitment can change convergence, even when the instantaneous p-bit response law is unchanged \cite{onizawa2023ojsp,onizawa2024srep,onizawa2026landscape}.  Parallel field evaluation is attractive for throughput, but naive simultaneous updates can also produce correlated oscillations.
+
+Temporal state in stochastic Ising dynamics is not new, and different methods retain different variables for different purposes.  Kinetic Ising models have incorporated persistence fields \cite{caccioli2008memory}; momentum annealing and coherent-Ising-machine momentum use configuration or continuous dynamical history \cite{okuyama2019momentum,brown2024momentumcim}.  Spike-frequency adaptation forms a real-valued adaptive state from binary activity and applies negative feedback on the input or energy-gradient side to promote escape from local minima \cite{xu2025sfa}.  PIMI adds the current binary spin after its nonlinear response to stabilize fully synchronous dense updates \cite{zhu2026pimi}, while time-dimensional exchange coupling relates successive binary spin configurations \cite{du2026tec}.  Physical p-bits and coupling paths can also have finite settling and circuit response times \cite{mcgoldrick2022settling,gibeault2024coupling}.  These mechanisms cannot be summarized by a single memory coefficient: stored quantity, sign, scaling, and reinjection all determine the transition kernel.
+
+LDPC decoding provides a structured setting in which parity feasibility and channel evidence must be satisfied together \cite{gallager1962ldpc,mackay1996ldpc,richardson2008coding}.  Statistical-physics treatments established this inference viewpoint \cite{saad2001ldpcphysics}; subsequent Ising and QUBO decoders include early mapped formulations, constraint-aware CMOS annealing, and a relaxation-oscillator solver with native six-body interactions \cite{tawada2020ldpc,elmitwalli2025constraint,dikopoulos2025rxoldpc}.  Most recently, Volpe \textit{et al.} demonstrated p-bit LDPC decoding in a deeply pipelined FPGA architecture \cite{volpe2026pipelined}.  Their pipeline overlaps arithmetic while explicitly preserving sequential logical state-update order.  The present work addresses a different regime: Jacobi-type field evaluation with stochastic partial activation.  Belief propagation remains a conventional decoding reference; p-bit LDPC decoding itself is not the novelty claimed here.
+
+The resulting question is narrower: what form of bit-local temporal state, if any, improves LDPC inference under parallel p-bit dynamics?  The present contribution is not temporal memory or same-bit feedback per se.  We examine a response-path rule in which the bit-specific real-valued saturated response itself is retained and additively reused downstream of the current nonlinear response and before stochastic readout.  Matched gain, normalization, and shuffling controls test amplitude, averaging, and identity; a binary-state self-feedback control with only its feedback coefficient swept tests whether same-bit binary inertia is sufficient.
+
+Within the tested random-regular $(3,6)$ ensemble, additive saturated-response reinforcement promotes acquisition of the channel-consistent valid-codeword basin and improves post-acquisition stability.  The advantage persists under tested alternative initializations and fixed-package transfer to independent matrices.  Binary-state feedback can help, especially at $N=288$, but does not reproduce the full additive benefit.  Separate cross-problem controls reported in the Supplemental Material delimit the scope of generalization.  We therefore claim neither a generic optimizer, a finite-size scaling law, nor a one-to-one mapping between a software coefficient and a device time constant.
+
+\section{P-bit annealing and temporal response dynamics}
+\label{sec:dynamics}
+
+\subsection{Factorized objective and instantaneous response}
+
+Let $x_i^{(t)}\in\{-1,+1\}$ denote the signed state of p-bit $i$ at parallel cycle $t$; throughout this paper, binary value $b_i=1$ corresponds to $x_i=+1$.  Each problem is represented by a factorized objective $\mathcal{E}^{(t)}(\bm{x})$ that is linear in any one spin when the others are fixed.  We define the signed local drive by
+\begin{equation}
+\mathcal{E}^{(t)}(\bm{x})=
+\mathcal{E}_{\setminus i}^{(t)}(\bm{x}_{\setminus i})
+-x_i F_i^{(t)}(\bm{x}_{\setminus i}),
+\qquad
+F_i^{(t)}=-\frac{\partial \mathcal{E}^{(t)}}{\partial x_i}.
+\label{eq:fielddefinition}
+\end{equation}
+The derivative denotes the coefficient of $x_i$ in the multilinear extension; it does not restrict the objective to pairwise couplings.  The superscript permits a cycle-dependent stochastic input, used below for the LDPC channel term.  Given the inverse-temperature-like schedule $I_0^{(t)}$, the instantaneous saturated response is
+\begin{equation}
+q_i^{(t)}=\tanh\!\left[I_0^{(t)}F_i^{(t)}(\bm{x}^{(t)})\right].
+\label{eq:q}
+\end{equation}
+For memoryless \psa{}, the decision variable is $d_i^{(t)}=q_i^{(t)}$.  With independent $\xi_i^{(t)}\sim\mathcal{U}[-1,1]$, its candidate state is
+\begin{equation}
+\widetilde{x}_i^{(t+1)}=\sgn\!\left(d_i^{(t)}+\xi_i^{(t)}\right).
+\label{eq:candidate}
+\end{equation}
+
+\subsection{Parallel update with stochastic activation}
+
+The transition kernel can be written as a full candidate step in which every local field and response candidate depends only on the same pre-update state $\bm{x}^{(t)}$ and the same pre-update response state.  State changes are therefore Jacobi, or synchronous, rather than sequential.  Synchronous field dependence does not mean that every p-bit is committed at every cycle.  Independently for each bit and cycle, the implementation draws
+\begin{align}
+a_i^{(t)}&\sim\operatorname{Bernoulli}(1-p_{\mathrm{hold}}),
+\label{eq:activationmask}\\
+x_i^{(t+1)}&=
+\begin{cases}
+\widetilde{x}_i^{(t+1)}, & a_i^{(t)}=1,\\
+x_i^{(t)}, & a_i^{(t)}=0.
+\end{cases}
+\label{eq:activation}
+\end{align}
+Thus $p_{\mathrm{hold}}$ is the per-bit, per-cycle probability that a p-bit retains its state, and $1-p_{\mathrm{hold}}$ is its activation probability.  The hold probability is fixed within a run and is independent of the annealing schedule.
+
+This stochastic partial activation follows the update-dynamics framework used in our earlier pSA studies \cite{onizawa2024srep,onizawa2026landscape}.  It limits the degree of simultaneous commitment because excessive parallel updating can generate oscillatory behavior and reduce search quality.  Partial activation is common to the algorithms compared here and is not the proposed contribution.  Some parameter sets separately use an initial plateau in a piecewise $I_0^{(t)}$ schedule; this schedule feature is independent of $p_{\mathrm{hold}}$.
+
+\subsection{Additive and finite-response temporal state}
+
+Let $m_i^{(t)}$ be the response state available at the start of cycle $t$, initialized to zero.  Additive \lpsa{} uses
+\begin{equation}
+d_i^{(t)}=q_i^{(t)}+\lambda m_i^{(t)},
+\qquad \lambda\geq0,
+\label{eq:additive}
+\end{equation}
+whereas finite-response \tpsa{} uses the convex update
+\begin{equation}
+d_i^{(t)}=\rho m_i^{(t)}+(1-\rho)q_i^{(t)},
+\qquad 0\leq\rho<1.
+\label{eq:filter}
+\end{equation}
+Equation~(\ref{eq:candidate}) then thresholds $d_i^{(t)}$.  The response state is committed under the same activation mask as the bit state.  Define
+\begin{equation}
+\widetilde m_i^{(t+1)}=
+\begin{cases}
+q_i^{(t)}, & \text{instantaneous-response rules},\\
+d_i^{(t)}, & \text{finite-response rule},
+\end{cases}
+\label{eq:responsecandidate}
+\end{equation}
+and commit
+\begin{equation}
+m_i^{(t+1)}=a_i^{(t)}\widetilde m_i^{(t+1)}
++[1-a_i^{(t)}]m_i^{(t)}.
+\label{eq:responsecommit}
+\end{equation}
+Consequently, a held p-bit retains both its binary state and its stored response.  When $p_{\mathrm{hold}}=0$, $m_i^{(t)}=q_i^{(t-1)}$ for the additive rule, recovering the familiar one-cycle form.  Because Eq.~(\ref{eq:additive}) spans $[-(1+\lambda),1+\lambda]$, it is reinforcement rather than a convex temporal average.  Setting $\lambda=0$ exactly recovers memoryless \psa{}.
+
+In the ungated limit $p_{\mathrm{hold}}=0$, Eq.~(\ref{eq:filter}) is the sampled form of an ideal single-pole response $\tau\dot m=-m+q$ under piecewise-constant input, with $\rho=\exp(-\Delta t/\tau)$.  With stochastic holding, $\rho$ governs relaxation only on activated updates; we do not assign an effective physical time constant to the gated process or identify $\rho$ with a unique device parameter.  Unlike the additive rule, the filtered state remains in $[-1,1]$ and attenuates new information when $\rho>0$.  Setting $\rho=0$ exactly recovers \psa{} under matched random inputs and activation masks.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.96\textwidth]{Fig1_update_rules.pdf}
+\caption{Update rules and causal controls.  The additive rule uses the stored response $m_i^{(t)}$ of the same bit, while the shuffled control uses $m_{\pi_t(i)}^{(t)}$ under a cycle-specific derangement $\pi_t$.  Normalized memory preserves temporal state without increasing the deterministic range; gain-only preserves the additive rule's maximum range without temporal state.  The finite-response rule is a convex lag.  All rules use the common Jacobi field evaluation and stochastic activation in Eqs.~(\ref{eq:activation}) and (\ref{eq:responsecommit}).  The diagram distinguishes algorithmic state from a device-specific implementation; no hardware cost or time-constant equivalence is inferred.}
+\label{fig:rules}
+\end{figure*}
+
+\subsection{Causal controls}
+
+Figure~\ref{fig:rules} places three matched response controls next to the main rule.  Their decision variables are
+\begin{align}
+d_{i,\mathrm{norm}}^{(t)}&=\frac{q_i^{(t)}+\lambda m_i^{(t)}}{1+\lambda},\\
+d_{i,\mathrm{gain}}^{(t)}&=(1+\lambda)q_i^{(t)},\\
+d_{i,\mathrm{shuf}}^{(t)}&=q_i^{(t)}+\lambda m_{\pi_t(i)}^{(t)} .
+\label{eq:controls}
+\end{align}
+Here $\pi_t$ is generated as a nonzero cyclic rotation of one randomly ordered bit list, so $\pi_t(i)\neq i$ for every bit while the response multiset, mean, and second moment are preserved.  Normalized memory tests temporal averaging without deterministic-range expansion; gain-only tests the same maximum range without history; and shuffled memory tests whether a distribution-matched but bit-misaligned delayed response is sufficient.
+
+A fourth control replaces the stored response with the same bit's pre-update binary state,
+\[
+d_{i,\mathrm{bin}}^{(t)}=q_i^{(t)}+\kappa x_i^{(t)},\qquad \kappa\geq0.
+\]
+We call this \emph{binary-state self-feedback}.  It is inspired by the stored-quantity question raised by PIMI, but it is not a PIMI reproduction: the noise, schedule, stochastic activation, and workload differ.  Unlike Eq.~(\ref{eq:additive}), it retains no separate real-valued response state.  Together, the controls distinguish deterministic range, temporal averaging, bit identity, and the identity of the retained quantity.
+
+Both memory rules require one response state per p-bit and $O(N)$ additional arithmetic.  Sparse local-field evaluation remains $O(|\mathcal{E}|)$ per cycle.  This operation count is not a claim about energy, area, latency, or device efficiency.
+
+\section{LDPC decoding and numerical framework}
+\label{sec:framework}
+
+For a parity-check matrix $H\in\{0,1\}^{M\times N}$, a binary estimate is valid when $H\bm b=\bm 0\pmod 2$.  We use $x_i=2b_i-1$, so $b_i=0$ and 1 correspond to $x_i=-1$ and $+1$, respectively.  Every tested random-regular $(3,6)$ matrix has even check degree six; hence check $a$ is satisfied exactly when $\prod_{j\in\partial a}x_j=+1$.
+
+Transmission uses BPSK, $s_i^{\mathrm{tx}}=1-2b_i=-x_i$, over an additive-white-Gaussian-noise channel.  From the received sample $y_i$, the implementation forms $z_i=\tanh[g_i(y_i)]$, where the selected scaling $g_i$ is recorded with each parameter set.  At every cycle it draws $u_i^{(t)}\sim\mathcal U[-1,1]$, sets $r_i^{(t)}=\mathbf 1[z_i<u_i^{(t)}]$, and uses the signed stochastic channel bit $c_i^{(t)}=2r_i^{(t)}-1$.  Thus $\Pr(c_i^{(t)}=+1)=(1-z_i)/2$ and $\E[c_i^{(t)}\mid y_i]=-z_i$.
+
+Conditioned on the cycle's stochastic channel bits, the implemented factorized energy and local drive are
+\begin{align}
+\mathcal E_{\mathrm{LDPC}}^{(t)}(\bm x)
+&=-k_w\sum_a\prod_{j\in\partial a}x_j
+-k_r\sum_i c_i^{(t)}x_i, \label{eq:ldpcenergy}\\
+F_{i,\mathrm{LDPC}}^{(t)}
+&=k_w\sum_{a\in\partial i}\prod_{j\in\partial a\setminus i}x_j
++k_r c_i^{(t)} .
+\label{eq:ldpcfield}
+\end{align}
+The parity term rewards zero syndrome.  In expectation, the channel drive is $-k_r z_i$ and therefore favors the BPSK-consistent bit value.  Parity validity alone is insufficient: a different codeword can also have zero syndrome, whereas the channel term distinguishes the transmitted word among valid codewords.  This is the mathematical basis for the channel-consistent valid-basin language used below.  Detailed sign derivations and readout rules are given in Appendix~\ref{app:mapping}.
+
+The primary endpoints are bit-error rate (BER) and frame-error rate (FER) relative to the transmitted word at $E_b/N_0\in\{2.0,2.5,3.0\}$ dB.  Belief propagation (BP) is included in Fig.~\ref{fig:representative} as a conventional decoding reference; no computational, latency, energy, or implementation superiority over BP is claimed.  BP implementation details are given in the Supplemental Material.  All main LDPC studies use $N=96,192,288$ and $M=N/2$.  ``Representative'' denotes one fixed matrix per size, whereas ``independent code realizations'' denotes the distinct matrices in the transfer study and does not imply finite-size scaling.
+
+\subsection{Numerical-study designs}
+
+The LDPC studies answer distinct questions and are not pooled as one comparison.  Table~\ref{tab:protocols} summarizes each design, its parameter relation, and the inference it supports.  Benchmark and control trajectories begin from the implementation's all-zero bit state with zero response state; the correct-start intervention instead begins at the transmitted codeword while retaining zero response state.  Depending on the recorded parameter package, readout uses the final state, a post-burn-in bitwise majority, or the best visited state under the LDPC objective.  Complete parameter provenance, seeds, matrix identifiers, validation hashes, condition-level results, and the separate cross-problem protocols are supplied in the Supplemental Material \cite{supplement}.
+
+\begin{table*}[t]
+\caption{Distinct numerical-study designs.  The comparison unit in the last column is also the resampling unit for the stated cross-instance uncertainty.}
+\label{tab:protocols}
+\scriptsize
+\begin{tabular}{@{}p{0.14\textwidth}p{0.175\textwidth}p{0.225\textwidth}p{0.255\textwidth}p{0.095\textwidth}@{}}
+\toprule
+\raggedright Study & \raggedright Scope & \raggedright Parameter relation & \raggedright Supported inference & \raggedright Statistical unit \tabularnewline
+\midrule
+\raggedright Optimized LDPC benchmark & \raggedright One fixed $H$ per $N=96,192,288$; three SNRs & \raggedright Independent tuning by mode; 10,000 trials/SNR/mode & \raggedright Best-achieved performance for the representative matrices & \raggedright Trial; seed batch for paired checks \tabularnewline
+\raggedright Causal and stored-quantity controls & \raggedright Representative matrices; high-statistics endpoints and targeted trajectories & \raggedright Matched rule controls plus a separately swept binary-state coefficient; paired streams & \raggedright Rule discrimination, response alignment, and stored-quantity sufficiency & \raggedright Seed batch or trajectory \tabularnewline
+\raggedright Acquisition--stability analysis & \raggedright Representative $N=192,288$ matrices; 2.5 dB; 200 trajectories per cell & \raggedright Fixed matched-control sets; all-zero, random, and channel-hard starts; separate correct-start intervention & \raggedright Correct-basin acquisition, initialization robustness, and conditional stability & \raggedright Trajectory or paired seed batch \tabularnewline
+\raggedright Cross-code transfer robustness & \raggedright Ten independent $(3,6)$ matrices/size; 1000 trials/SNR/arm/code & \raggedright Fixed independently selected additive and pSA-specific packages; matched $\lambda=0$ rule ablation; no per-code tuning & \raggedright Package-level fixed-transfer comparison and separate response-rule ablation & \raggedright Code realization \tabularnewline
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\section{Representative LDPC performance}
+\label{sec:performance}
+
+Figure~\ref{fig:representative} reports the independently optimized high-statistics comparison on the representative matrices.  Each plotted point contains 10,000 trials.  The separate mode-specific search, refinement, response-coefficient selection, and evaluation-stream usage are detailed in the Supplemental Material.  Averaged equally over the three SNRs, additive \lpsa{} reduces BER relative to independently optimized \psa{} by 33.5\%, 74.8\%, and 81.8\% at $N=96,192,288$, respectively (Table~\ref{tab:representative}).  The corresponding pooled FER reductions are 29.2\%, 81.0\%, and 83.9\%.  Finite-response \tpsa{} does not provide a consistent LDPC advantage; its pooled BER is worse than \psa{} for $N=96$ and 192 and only 1.7\% lower at $N=288$.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.96\textwidth]{Fig2b_LDPC_BER_N192_N288.pdf}\\[2mm]
+\includegraphics[width=0.96\textwidth]{Fig2c_LDPC_FER_N192_N288.pdf}
+\caption{Representative-matrix LDPC performance for $N=192$ and 288.  Each algorithmic mode was searched and refined independently, and every displayed point contains 10,000 trials; the final response-coefficient selection and evaluation-stream usage are specified in the Supplemental Material.  Thus these panels report best-achieved benchmark performance, not the matched-parameter controls of Figs.~\ref{fig:controls} and \ref{fig:crosscode}.  (a,b) BER and (c,d) FER.  The $N=96$ data follow the same protocol and are reported numerically in Table~\ref{tab:representative} and in the Supplemental Material.}
+\label{fig:representative}
+\end{figure*}
+
+\begin{table}[t]
+\caption{Representative-code results pooled equally over 2.0, 2.5, and 3.0 dB.  Modes were independently optimized.}
+\label{tab:representative}
+\begin{ruledtabular}
+\begin{tabular}{cccccc}
+$N$ & \multicolumn{2}{c}{BER} & $\Delta$BER & \multicolumn{2}{c}{FER} \\
+ & \psa{} & Add. & (\%) & \psa{} & Add. \\
+\hline
+96  & 0.02275 & 0.01513 & 33.5 & 0.2616 & 0.1852 \\
+192 & 0.03025 & 0.007619 & 74.8 & 0.3165 & 0.0600 \\
+288 & 0.04025 & 0.007308 & 81.8 & 0.4043 & 0.0649 \\
+\end{tabular}
+\end{ruledtabular}
+\end{table}
+
+These values establish performance only for the fixed matrices and their separately selected parameter sets.  They do not by themselves identify the responsible dynamical ingredient or establish transfer to new codes.  Matched controls, trajectory analysis, and cross-code tests address those questions.
+
+\section{Causal controls of additive temporal reinforcement}
+\label{sec:controls}
+
+In the matched causal-control study, the additive-optimized nonmemory parameter set is fixed and only the response rule is varied.  The high-statistics evaluation uses 10,000 trials per SNR and condition with paired seed batches.  The selected coefficients are $\lambda=0.95$, 0.95, and 0.90 for $N=96,192,288$.  Additive BERs pooled over SNR are 0.01540, 0.007365, and 0.007597.  Neither normalized memory nor gain-only approaches these values (Fig.~\ref{fig:controls}).  Against additive, the paired excess BERs and 95\% seed-batch intervals are, respectively, $0.04497$ $[0.04449,0.04544]$ and $0.01573$ $[0.01511,0.01635]$ for $N=96$; $0.30776$ $[0.30720,0.30833]$ and $0.49233$ $[0.49169,0.49297]$ for $N=192$; and $0.33068$ $[0.33026,0.33110]$ and $0.31471$ $[0.31427,0.31515]$ for $N=288$.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.98\textwidth]{Fig3_matched_causal_controls.pdf}
+\caption{Matched causal controls on the representative matrices.  All variants use the fixed size-specific additive-optimized parameter set and paired seeds; only the response rule changes.  Additive response memory outperforms matched \psa{}, normalized memory, and gain-only at all three sizes.  Error bars and paired intervals use seed batches, not individual bits, as the uncertainty unit.  The coefficient sweeps show no continuing improvement beyond the selected high-$\lambda$ region, so the result is not explained by truncation at the original search limit.}
+\label{fig:controls}
+\end{figure*}
+
+The response-alignment analysis adds the shuffled-memory intervention.  The derangement preserves the stored response's mean and second moment to numerical precision but makes the response used by bit $i$ nearly uncorrelated with that bit's own preceding response.  At 2.5 dB, the decoded BERs for additive, matched \psa{}, and shuffled memory are 0.0158, 0.0379, and 0.0958 at $N=96$; 0.00737, 0.2817, and 0.3837 at $N=192$; and 0.00523, 0.3201, and 0.3965 at $N=288$.  The benefit therefore requires bit-specific temporal alignment, not merely the marginal distribution of a delayed signal.
+
+Binary-state self-feedback addresses a different estimand, so it is not added to Fig.~\ref{fig:controls}.  Its coefficient $\kappa$ is swept separately to give binary feedback a best-performance comparison rather than forcing $\kappa=\lambda$.  At $N=96$ and 288 the score-, BER-, and FER-selected values coincide at $\kappa=0.25$ and 0.75.  Their pooled BERs are 0.03029 and 0.01952, compared with additive values 0.01540 and 0.00760; binary-minus-additive paired differences are 0.014883 $[0.014209,0.015558]$ and 0.011927 $[0.011260,0.012593]$.  At $N=192$, the score-selected $\kappa=0.50$ freezes in a wrong valid codeword.  A separately high-statistics, BER-favorable sensitivity at $\kappa=0.25$ still has BER 0.21152, exceeding additive by 0.204155 $[0.203056,0.205253]$.  Equal-range $\kappa=\lambda$ tests and the complete selection audit are reported separately in the Supplemental Material \cite{supplement}.
+
+Together these interventions reject deterministic gain alone, normalized averaging alone, distribution-matched but misaligned response history, and same-bit binary inertia as complete explanations.  Binary feedback is not generally ineffective: at $N=288$ it captures a substantial part of the improvement over matched \psa{}, but not the full saturated-response benefit.
+
+\section{Dynamical mechanism in LDPC decoding}
+\label{sec:mechanism}
+
+\subsection{Acquisition from the default initialization}
+
+The acquisition--stability analysis follows trajectories initialized from the implementation's default all-zero bit state at 2.5 dB, with zero response state.  Because every linear code contains the all-zero codeword while the transmitted codeword is randomly generated, this initial state is valid but is generally not the transmitted word.  A trajectory is said to acquire the correct basin on its first visit to the transmitted valid codeword.  This targeted analysis compares matched \psa{}, additive, shuffled-memory, and gain-only dynamics; normalized memory is evaluated in the matched causal-control study of Sec.~\ref{sec:controls} but is not part of this acquisition--stability data set.  For $N=192$ and 288, additive dynamics reach the correct state in 95.5\% and 95.0\% of 200 trajectories, whereas matched \psa{}, shuffled memory, and gain-only reach it in 0\% under this protocol.  Among additive trajectories that reach, the median first-passage cycles are 444 and 425.  Thus the principal inter-method difference under the default initialization is acquisition, not a comparison conditioned on all methods first reaching the target.
+
+To test whether this difference is specific to initialization at a valid all-zero codeword, we repeated the matched-parameter analysis from independent random spins and channel-hard-decision states, again using 200 trajectories per method, initialization, and size.  At $N=192$, additive dynamics acquire the transmitted codeword in 96\% of trajectories from either alternative start; at $N=288$, the corresponding rates are 96\% and 97\%.  Matched \psa{}, gain-only, and shuffled memory reach it in 0\% in all four alternative-initialization cells.  The additive decoded BER remains 0.0035--0.0059, compared with 0.28--0.32 for matched \psa{}.  The acquisition advantage is therefore not an artifact of initialization at the valid all-zero codeword under these tested conditions; complete initial-state diagnostics and censored first-passage curves are reported in the Supplemental Material \cite{supplement}.
+
+Figure~\ref{fig:mechanism} links this outcome to channel consistency, parity feasibility, and state motion.  Additive trajectories jointly reduce syndrome and instantaneous BER while aligning with the channel evidence.  At 2.5 dB the late back-flip probabilities per bit-update are $3.63\times10^{-4}$ and $1.70\times10^{-4}$ for $N=192$ and 288, compared with 0.144 and 0.175 for matched \psa{}.  The response-source product remains about 0.996 for bit-aligned additive memory but collapses toward zero after shuffling.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.45\textwidth]{Fig4a_channel_acquisition.pdf}\\[1mm]
+\includegraphics[width=0.81\textwidth]{Fig4b_acquisition_retention_summary.pdf}
+\caption{Integrated mechanism evidence at $E_b/N_0=2.5$ dB on the representative matrices.  Top: default all-zero-initialized trajectories at $N=192$ jointly track syndrome, instantaneous BER, and channel alignment; gain-only can reach zero syndrome while remaining near BER 0.5.  Lower four panels: default-start reach and first-passage time (upper row) are separated from correct-start residence and escape probability (lower row); each intervention uses 200 trajectories per method and size.  Zero markers are true zero reach probabilities.  NR means not reached in any trajectory, so first-passage time is undefined.  Correct-start measures are retention interventions, not acquisition rates.  Alternative-initialization validation is reported in the Supplemental Material.}
+\label{fig:mechanism}
+\end{figure*}
+
+\subsection{Post-acquisition stability and a wrong-codeword counterexample}
+
+After an additive trajectory from the default initialization first reaches the correct word, its mean subsequent residence fraction is 0.99998 at both $N=192$ and 288.  A separate correct-start intervention initializes every method at the transmitted word with zero response memory, preventing acquisition selection from contaminating retention.  Under this intervention additive residence is 0.9176 and 0.9020.  Matched \psa{} and shuffled memory escape immediately and have zero residence at the sampled resolution.  Conditional on an additive escape, the return probabilities are approximately 0.959 and 0.963.
+
+The microscopic decomposition is size dependent.  At $N=192$ and 288, reduced escape and rapid return both contribute.  At $N=96$, additive dynamics can escape more often than a comparator yet return much faster; across new $N=96$ codes, additive return times span roughly 49--84 cycles compared with 170--349 cycles for the matched \psa{} ablation.  We therefore use the general term \emph{post-acquisition stability}, not ``escape suppression,'' for the transferable mechanism.
+
+Gain-only supplies a crucial counterexample.  At $N=192$ it can settle to zero syndrome with essentially zero late flips while maintaining BER near 0.5 and negligible alignment with the channel.  The score-selected binary-state control likewise reaches zero syndrome with negligible motion but acquires the transmitted word in none of 200 trajectories and has decoded BER 0.497.  Both have frozen in valid but wrong codewords.  At $N=288$, however, binary feedback at $\kappa=0.75$ acquires the transmitted word in 93\% of trajectories and retains it thereafter, while its decoded BER 0.01054 remains above the additive value 0.00595.  Generic persistence can therefore contribute, but low syndrome, low activity, or binary inertia alone does not explain the full channel-consistent decoding benefit.
+
+\section{Robustness across independent LDPC code realizations}
+\label{sec:robustness}
+
+To test robustness across code realizations, one fixed size-specific additive package is transferred to ten independently generated random-regular matrices at each block length.  The same C00--C09 matrices, SNRs, stochastic seed design, channel generation, and initialization are used for every arm, with 1000 trials per code, SNR, and arm.  No package is retuned for an individual code.
+
+For a separately optimized, package-level fixed-transfer comparator, we also transfer the size-specific \psa{} package independently selected on the representative matrix in Sec.~\ref{sec:performance}.  Each transferred package retains its complete selected dictionary, including schedule, activation, channel scaling, and readout.  Independently selected packages can therefore differ in readout and other nonmemory parameters; at $N=192$, for example, the additive package retains best-state readout whereas the pSA-specific package retains majority readout.  This comparison is interpreted at the package level.  The matched ablation instead holds the additive package's nonmemory parameters and readout fixed and changes only $\lambda$ to zero, thereby providing the rule-isolating comparison.
+
+Against the pSA-specific fixed-transfer package, the additive fixed-transfer package yields lower BER and FER for all 30 of 30 code realizations when pooled across the three SNRs (Fig.~\ref{fig:crosscode}).  The code-level median relative BER reductions and 95\% code-bootstrap intervals are 35.46\% $[32.29,38.83]\%$ at $N=96$, 76.61\% $[74.81,77.17]\%$ at $N=192$, and 81.10\% $[80.66,81.84]\%$ at $N=288$.  The independent code realization is the bootstrap unit.
+
+The matched $\lambda=0$ ablation yields larger median BER reductions of 59.90\%, 97.46\%, and 97.61\%, respectively.  Those effects isolate the response-rule change under additive-optimized nonmemory parameters; they are not relabeled as independently optimized or pSA-specific performance margins.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.98\textwidth]{Fig5_cross_code_three_way_BER.pdf}
+\caption{Three-way fixed-transfer comparison across independent code realizations.  Each point is the BER for one code, pooled equally over 2.0, 2.5, and 3.0 dB.  The additive and pSA-specific packages were independently selected on the representative matrix and then transferred intact without per-code retuning; the matched $\lambda=0$ arm instead uses the additive nonmemory parameters and readout and removes only response reinforcement.  Ten codes are evaluated at each $N$ with 1000 trials per code, SNR, and arm.  The additive package has lower BER than both comparators for every code.  The pSA-specific arm is the package-level fixed-transfer performance baseline, whereas the matched ablation isolates the response-rule effect.  These data are not interpreted as finite-size scaling.}
+\label{fig:crosscode}
+\end{figure*}
+
+Mechanism sampling on nine of these matrices (three per size) is consistent with the representative-code interpretation: additive dynamics have higher correct-basin acquisition and lower late back-flip probability in all nine comparisons.  Detailed per-code tables, absolute error rates, matrix metadata, and trajectory summaries are in the Supplemental Material \cite{supplement}.
+
+\section{Discussion}
+\label{sec:discussion}
+
+The controls identify saturated-response reinforcement as a rule-level resource rather than a scalar coefficient.  Additive memory changes both amplitude and history; neither ingredient alone suffices.  Destroying bit identity while preserving the delayed-response distribution removes the useful transition kernel.  The tuned binary-state control sharpens the conclusion: same-bit self-feedback can be beneficial, but it does not reproduce the full effect of retaining the real-valued saturated response.
+
+For the tested LDPC decoders, the mechanism has two stages.  First, additive dynamics are substantially more likely to acquire the valid codeword consistent with channel evidence.  Second, after acquisition they remain near that basin or return rapidly after departure.  This distinction prevents a common mechanistic error.  Zero syndrome and low activity can also characterize a valid wrong-codeword freeze, as the $N=192$ gain-only and binary-state controls demonstrate.  The $N=288$ binary result additionally shows that persistence can materially assist acquisition without matching additive decoding quality.  A successful explanation must therefore include parity feasibility, channel consistency, and the retained variable.
+
+Because the LDPC implementation resamples stochastic channel evidence at every cycle, part of the observed benefit may also reflect temporal integration of channel information in addition to stabilization of the parity-constrained parallel dynamics.  These contributions were not separately isolated; their separation under a deterministic channel field remains an open question.
+
+This interpretation is consistent with, but distinct from, prior temporal-state approaches.  PIMI and time-dimensional exchange coupling reuse a bit's binary state \cite{zhu2026pimi,du2026tec}; spike-frequency adaptation constructs an adaptive real state from output activity and returns negative feedback on the local-field side \cite{xu2025sfa}; momentum methods retain configuration or continuous dynamical history \cite{okuyama2019momentum,brown2024momentumcim}.  The present rule retains the saturated response itself and adds it at the stochastic response path.  The contribution is therefore not memory or same-bit feedback per se, but evidence that the identity of the stored quantity and its reinjection rule determine computational function.
+
+The 30-code experiment supports transfer across independently generated random-regular $(3,6)$ matrices under fixed size-specific packages.  Transferring the separately optimized pSA-specific package to the same matrices shows that the fixed-transfer advantage of the additive package is not merely a consequence of evaluating \psa{} under additive-optimized nonmemory parameters: the additive package wins in BER and FER for all 30 codes.  The matched $\lambda=0$ results remain a separate causal ablation.  The two comparisons answer different questions: package-level fixed-transfer performance and response-rule causality, respectively.  These studies do not establish universality over degree distributions, channels, schedules, or block lengths, and they are not finite-size scaling.  Likewise, initialization robustness was tested only on the representative $N=192$ and 288 matrices at 2.5 dB: random and channel-hard-decision starts preserve the acquisition advantage, while broader initial-state, channel, and ensemble dependence remains outside the present study.
+
+From a physical-design perspective, finite p-bit settling and programmable coupling dynamics make retained circuit state a realistic co-design variable \cite{mcgoldrick2022settling,gibeault2024coupling}.  Equation~(\ref{eq:additive}) can be interpreted abstractly as a stored response plus an additive readout path, whereas Eq.~(\ref{eq:filter}) resembles an ideal first-order response node.  The data show that the response-path placement and identity of retained state can alter the transition kernel even when both algorithms add one value per bit.  They do not demonstrate a particular circuit realization, energy, area, or speed benefit, nor identify $\lambda$ or $\rho$ with a unique device parameter.  Precision, saturation, timing, interconnect delay, and variability remain implementation dependent.
+
+Cross-problem boundary controls in the Supplemental Material do not support a generic advantage of temporal state under the tested conditions: the MAX-CUT results are co-optimized outcomes, whereas the random 2-SAT study is a matched-$k_w$ finite-response-$\rho$ control.  These studies delimit generalization rather than provide additional applications or a matched causal test of the additive LDPC rule \cite{supplement}.
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+Bit-aligned additive saturated-response memory creates a distinct temporal-reinforcement regime in parallel p-bit LDPC dynamics.  It improves independently optimized representative-code BER and FER, survives gain, normalization, shuffling, and tuned binary-state controls, promotes channel-consistent correct-basin acquisition from all-zero, random, and channel-hard-decision starts, and improves post-acquisition stability.  Fixed additive packages also outperform separately optimized pSA-specific packages transferred without per-code retuning on all 30 independent code realizations; the larger matched $\lambda=0$ effects separately support response-rule causality.  Binary self-feedback can contribute but does not reproduce the saturated-response benefit.  These results motivate co-design of the retained variable and its response-path reinjection around computational structure.
+
+\section*{Data Availability Statement}
+
+The simulation code, processed data, parameter files, and metadata supporting this study, including the binary-state-control, three-arm fixed-transfer, and initialization-robustness validation records, will be made publicly available in a GitHub repository upon publication.  The repository URL and an immutable release identifier will be inserted before final submission or publication.  While the archival release is being prepared, these materials are available from the corresponding author upon reasonable request.
+
+\section*{Acknowledgments}
+
+The author acknowledges the use of OpenAI ChatGPT and OpenAI Codex as substantive assistance for code development and debugging, development of analysis procedures, literature organization, and drafting and revision of the manuscript.  The author directed the work, verified numerical claims against the archived simulation outputs, checked references, and takes responsibility for the content.  Exact model/version identifiers will be inserted from the usage records before submission.  No AI system is listed as an author.
+
+\clearpage
+\appendix
+
+\section{LDPC sign convention and stochastic channel field}
+\label{app:mapping}
+
+The simulator stores binary bits $b_i\in\{0,1\}$ and thresholds them to one when the signed decision variable is nonnegative.  The corresponding manuscript spin is therefore $x_i=2b_i-1$.  For a degree-$d_a$ check,
+\begin{equation}
+\prod_{j\in\partial a}x_j=(-1)^{d_a-\sum_{j\in\partial a}b_j}.
+\label{eq:checkspin}
+\end{equation}
+Because the tested check degree is $d_a=6$, even binary parity is equivalent to $\prod_jx_j=+1$.  Holding $x_i$ out of the product gives the first term of Eq.~(\ref{eq:ldpcfield}); in the binary kernel this same quantity is evaluated as the XOR of the other five bits and mapped to $+1$ for XOR one and $-1$ for XOR zero.
+
+For channel value $z_i$, the comparison $r_i=\mathbf 1[z_i<u_i]$ with $u_i\sim\mathcal U[-1,1]$ gives
+\begin{equation}
+\Pr(r_i=1)=\frac{1-z_i}{2},\qquad
+\E[2r_i-1]=-z_i.
+\label{eq:channelmean}
+\end{equation}
+For BPSK, a positive received sample supports binary zero, hence $z_i>0$ gives a negative expected field and favors $x_i=-1$ as required.  Equations~(\ref{eq:ldpcenergy}) and (\ref{eq:ldpcfield}) are therefore the exact cycle-conditioned objective and drive for the implementation.  Their channel expectation is obtained by replacing $c_i^{(t)}$ with $-z_i$.  The factorized form is preferable to calling the model a pairwise Hamiltonian because each degree-six parity check is a sixth-order product and the channel factor is resampled each cycle.
+
+A decoded state is called (i) \emph{valid} if all check products equal $+1$, (ii) \emph{correct} if it also equals the transmitted word, and (iii) \emph{channel consistent} when its signed channel score $\sum_i z_i(1-2b_i)=-\sum_i z_i x_i$ is high.  This separation is essential because validity alone does not select the transmitted codeword.
+
+\section{Parameter provenance and readout}
+\label{app:parameters}
+
+Table~\ref{tab:transferparams} records the key fields of the additive packages used for cross-code transfer.  Every value except $\lambda$ is shared by the additive and matched-ablation arms at a given size.  The pSA-specific transfer instead uses the complete parameter-and-readout package independently selected for \psa{} on the representative matrix; its side-by-side values are given in the Supplemental Material.  The matched causal controls and acquisition--stability analysis use the size-specific additive-optimized parameter sets on the representative matrices, with the rule changes described in Secs.~\ref{sec:controls} and \ref{sec:mechanism}.  Complete machine-readable dictionaries, seeds, and configuration hashes accompany the Supplemental Material.
+
+\begin{table}[t]
+\caption{Key fields of the fixed additive packages used for cross-code transfer.  The matched \psa{} ablation uses $\lambda=0$ with all remaining entries, including readout, unchanged.}
+\label{tab:transferparams}
+\begin{ruledtabular}
+\begin{tabular}{lccc}
+Field & $N=96$ & $N=192$ & $N=288$ \\
+\hline
+$\lambda$ & 0.95 & 0.95 & 0.90 \\
+cycles & 25,600 & 19,200 & 25,600 \\
+schedule & piecewise & cosine & cosine \\
+$I_{0,\min}$ & 0.06227 & 0.07745 & 0.22683 \\
+$I_{0,\max}$ & 1.20690 & 0.73899 & 8.36851 \\
+$p_{\mathrm{hold}}$ & 0.73137 & 0.46613 & 0.40758 \\
+$k_w$ & 4.61543 & 3.84760 & 0.17046 \\
+readout & majority & best state & best state \\
+\end{tabular}
+\end{ruledtabular}
+\end{table}
+
+Response state is initialized to zero unless an intervention explicitly states otherwise.  The benchmark, matched-control, and default-initialization mechanism kernels initialize every stored LDPC bit to zero; this is a valid codeword but is generally not the randomly transmitted word.  The initialization-robustness intervention instead uses either independent equiprobable bits or the hard decision from the received channel sample while maintaining paired initial states across methods.  The correct-start retention challenge initializes bits at the transmitted word while retaining zero response memory.  These interventions answer acquisition robustness and conditional stability questions and are never pooled.
+
+The available readouts are the final state, a bitwise majority over the selected post-burn-in window, and a best-visited-state rule.  For LDPC, best state first minimizes syndrome weight and then maximizes $\sum_i z_i(1-2b_i)$ among ties.  For MAX-CUT it maximizes $C(\bm x)$, and for 2-SAT it minimizes the unsatisfied-clause count.  The selected rule, burn-in, and sampling window are part of each recorded parameter set.
+
+\section{Statistical definitions}
+\label{app:statistics}
+
+For $T$ trials of length $N$, $\mathrm{BER}=\sum_{u=1}^{T}d_H(\hat{\bm b}_u,\bm b_u)/(TN)$ and $\mathrm{FER}=T^{-1}\sum_u\mathbf{1}[\hat{\bm b}_u\neq\bm b_u]$.  Relative reduction is $1-y_{\mathrm{add}}/y_{\mathrm{ctrl}}$.  In the matched causal-control and initialization-robustness studies, common seed streams define paired batch differences, and intervals are computed across the ten prespecified seed batches.  The initialization acquisition-difference intervals use the same unbounded paired-$t$ construction and are not clipped to the probability range.  In the cross-code transfer study, code-level pooled ratios are formed before resampling; the independent code realization, not the trial or SNR point, is the bootstrap unit.  Percentile intervals use 20,000 bootstrap resamples.
+
+For the matched-$k_w$ 2-SAT control, each formula contributes the mean outcome over its 100 paired trials at a fixed $(k_w,\rho)$ cell.  Formula-wise treatment-minus-control differences are resampled with replacement to form the reported 95\% percentile interval.  Satisfiable and unsatisfiable strata are analyzed separately only as secondary outcomes.
+
+\section{Acquisition and stability metrics}
+\label{app:metrics}
+
+Let $T_{\mathrm{hit}}=\inf\{t:\bm{x}^{(t)}=\bm{x}^{\star}\}$ be the first cycle at which the transmitted codeword $\bm{x}^{\star}$ is visited.  Correct-reach probability is the fraction of trajectories with finite $T_{\mathrm{hit}}$ inside the simulation horizon.  For a reaching trajectory, post-hit residence is
+\begin{equation}
+R=\frac{1}{T-T_{\mathrm{hit}}+1}\sum_{t=T_{\mathrm{hit}}}^{T}
+\mathbf{1}[\bm{x}^{(t)}=\bm{x}^{\star}].
+\end{equation}
+An escape is a transition from $\bm{x}^{\star}$ to any other state; return time counts cycles until the next visit.  Back-flip probability is the fraction of bit updates that reverse the preceding bit state over the stated late window.  ``Post-acquisition stability'' refers jointly to residence, escape, and return behavior and does not assume that the same microscopic component dominates at every $N$.
+
+\bibliography{references}
+
+\end{document}

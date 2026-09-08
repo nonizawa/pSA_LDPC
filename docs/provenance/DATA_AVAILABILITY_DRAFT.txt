@@ -1,0 +1,18 @@
+DATA AVAILABILITY STATEMENT - CURRENT DRAFT
+
+The simulation code, processed data, parameter files, and metadata supporting this study, including the three-arm fixed-transfer and initialization-robustness validation records, will be made publicly available in a GitHub repository upon publication. The repository URL and an immutable release identifier will be inserted before final submission or publication. While the archival release is being prepared, these materials are available from the corresponding author upon reasonable request.
+
+FINAL-PUBLIC TEMPLATE - DO NOT USE UNTIL THE RELEASE EXISTS
+
+The simulation code, processed data, parameter files, and metadata supporting this study are publicly available at [GITHUB REPOSITORY URL], archived as [ZENODO/OTHER DOI OR IMMUTABLE RELEASE URL]. The release contains the parameter dictionaries, random seeds, parity-check matrices, 2-SAT formula metadata, three-arm fixed-transfer records, initialization-robustness trajectories and summaries, processed figure data, validation records, and scripts needed to reproduce the reported analyses.
+
+Editorial notes
+
+- Do not invent or reserve a repository URL in the manuscript.
+- Replace both bracketed fields only after testing the public release from a clean environment.
+- Cite the archived release in the bibliography when the DOI exists.
+- If APS requires public availability at acceptance rather than publication, publish and archive before returning final files.
+- Confirm that third-party inputs and software can legally be redistributed.
+
+Policy checked August 27, 2026:
+https://journals.aps.org/authors/data-availability-statements

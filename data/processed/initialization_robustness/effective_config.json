@@ -1,0 +1,53 @@
+{
+  "EbNo_dB": 2.5,
+  "all_zero_source": "source_project/phase2b_results/acquisition_retention_20260827",
+  "channel_input_mode": "float",
+  "command": [
+    "source_project/.venv-paper/bin/python",
+    "source_project/phase6_results/initialization_robustness_20260830/run_initialization_robustness.py",
+    "--n-workers",
+    "10",
+    "--resume"
+  ],
+  "config_hash": "1e3654250c814919a3fbf0f5a0f778d4163d5105eb619092ae6b633fe6aef513",
+  "cycle_bin": 100,
+  "fixed_bit_width": 8,
+  "matrix_seed": 0,
+  "methods": [
+    "pSA",
+    "additive",
+    "gain_only",
+    "shuffled"
+  ],
+  "new_initializations": [
+    "random",
+    "channel_hard"
+  ],
+  "phase5_background_report": "source_project/phase5_results/psa_specific_transfer_20260828/PSA_SPECIFIC_TRANSFER_REPORT.md",
+  "phase5_parameters_used": false,
+  "public_study_name": "Initialization Robustness Study",
+  "random_initialization_seed_construction": "SeedSequence([seed,1229867348])",
+  "reused_initialization": "all_zero",
+  "seed_construction": "20260826 + 8022*j, j=0..9",
+  "seeds": [
+    20260826,
+    20268848,
+    20276870,
+    20284892,
+    20292914,
+    20300936,
+    20308958,
+    20316980,
+    20325002,
+    20333024
+  ],
+  "sizes": [
+    "N192_M96",
+    "N288_M144"
+  ],
+  "source_parameter_files": {
+    "N192_M96": "source_project/paper_results_trip/ldpc/N192_M96/lambda_pSA/memory_sweep_summary.csv",
+    "N288_M144": "source_project/paper_results_trip/ldpc/N288_M144/lambda_pSA/memory_sweep_summary.csv"
+  },
+  "trials_per_method_initialization_size": 200
+}

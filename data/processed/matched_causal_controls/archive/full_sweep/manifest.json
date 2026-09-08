@@ -1,0 +1,26 @@
+{
+  "completed_conditions": 84,
+  "condition_count": 84,
+  "config_hash": "17c9d8a7d8aad43edbc3c346d8e9e22d1cf3891e0d090178ae5be1fcf07cfbe6",
+  "environment": {
+    "cpu_count": 16,
+    "hostname": "redacted-local-host",
+    "machine": "arm64",
+    "numba": "0.65.1",
+    "numpy": "2.2.6",
+    "platform": "macOS-26.5.2-arm64-arm-64bit",
+    "python": "3.10.7 (v3.10.7:6cc6b13308, Sep  5 2022, 14:02:52) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "python_executable": "source_project/.venv-paper/bin/python"
+  },
+  "estimated_bit_updates": 2270822400000,
+  "finished_utc": "2026-08-26T11:00:25.565874+00:00",
+  "run_dir": "source_project/phase1_results/full_lambda_anchor_20260826",
+  "runtime_summary": {
+    "bit_updates_per_second_including_overhead": 206119583.76943946,
+    "completed_conditions_total": 84,
+    "elapsed_seconds_this_invocation": 11017.014290791936,
+    "estimated_bit_updates": 2270822400000
+  },
+  "started_utc": "2026-08-26T07:56:48.530920+00:00",
+  "status": "complete"
+}

@@ -1,0 +1,17 @@
+size,initialization,variant,lambda_mem,EbNo_dB,trials,seed_count,n_cycles,source_parameter_file
+N192_M96,random,pSA,0.0,2.5,200,10,19200,source_project/paper_results_trip/ldpc/N192_M96/lambda_pSA/memory_sweep_summary.csv
+N192_M96,random,additive,0.95,2.5,200,10,19200,source_project/paper_results_trip/ldpc/N192_M96/lambda_pSA/memory_sweep_summary.csv
+N192_M96,random,gain_only,0.95,2.5,200,10,19200,source_project/paper_results_trip/ldpc/N192_M96/lambda_pSA/memory_sweep_summary.csv
+N192_M96,random,shuffled,0.95,2.5,200,10,19200,source_project/paper_results_trip/ldpc/N192_M96/lambda_pSA/memory_sweep_summary.csv
+N192_M96,channel_hard,pSA,0.0,2.5,200,10,19200,source_project/paper_results_trip/ldpc/N192_M96/lambda_pSA/memory_sweep_summary.csv
+N192_M96,channel_hard,additive,0.95,2.5,200,10,19200,source_project/paper_results_trip/ldpc/N192_M96/lambda_pSA/memory_sweep_summary.csv
+N192_M96,channel_hard,gain_only,0.95,2.5,200,10,19200,source_project/paper_results_trip/ldpc/N192_M96/lambda_pSA/memory_sweep_summary.csv
+N192_M96,channel_hard,shuffled,0.95,2.5,200,10,19200,source_project/paper_results_trip/ldpc/N192_M96/lambda_pSA/memory_sweep_summary.csv
+N288_M144,random,pSA,0.0,2.5,200,10,25600,source_project/paper_results_trip/ldpc/N288_M144/lambda_pSA/memory_sweep_summary.csv
+N288_M144,random,additive,0.9,2.5,200,10,25600,source_project/paper_results_trip/ldpc/N288_M144/lambda_pSA/memory_sweep_summary.csv
+N288_M144,random,gain_only,0.9,2.5,200,10,25600,source_project/paper_results_trip/ldpc/N288_M144/lambda_pSA/memory_sweep_summary.csv
+N288_M144,random,shuffled,0.9,2.5,200,10,25600,source_project/paper_results_trip/ldpc/N288_M144/lambda_pSA/memory_sweep_summary.csv
+N288_M144,channel_hard,pSA,0.0,2.5,200,10,25600,source_project/paper_results_trip/ldpc/N288_M144/lambda_pSA/memory_sweep_summary.csv
+N288_M144,channel_hard,additive,0.9,2.5,200,10,25600,source_project/paper_results_trip/ldpc/N288_M144/lambda_pSA/memory_sweep_summary.csv
+N288_M144,channel_hard,gain_only,0.9,2.5,200,10,25600,source_project/paper_results_trip/ldpc/N288_M144/lambda_pSA/memory_sweep_summary.csv
+N288_M144,channel_hard,shuffled,0.9,2.5,200,10,25600,source_project/paper_results_trip/ldpc/N288_M144/lambda_pSA/memory_sweep_summary.csv

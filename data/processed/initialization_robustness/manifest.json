@@ -1,0 +1,30 @@
+{
+  "completed_conditions": 16,
+  "condition_count": 16,
+  "config_hash": "1e3654250c814919a3fbf0f5a0f778d4163d5105eb619092ae6b633fe6aef513",
+  "environment": {
+    "cpu_count": 16,
+    "hostname": "redacted-local-host",
+    "machine": "arm64",
+    "numba": "0.65.1",
+    "numpy": "2.2.6",
+    "platform": "macOS-26.5.2-arm64-arm-64bit",
+    "python": "3.10.7 (v3.10.7:6cc6b13308, Sep  5 2022, 14:02:52) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "python_executable": "source_project/.venv-paper/bin/python"
+  },
+  "finished_utc": "2026-08-30T01:57:01.266330+00:00",
+  "new_trajectory_count": 3200,
+  "predefined_case": "Case A",
+  "reused_all_zero_trajectory_count": 1600,
+  "runtime": {
+    "combined_trajectory_count": 4800,
+    "elapsed_seconds_this_invocation": 14.154368625022471,
+    "new_cycle_bin_row_count": 716800,
+    "new_trajectory_count": 3200,
+    "reused_all_zero_trajectory_count": 1600,
+    "simulation_condition_elapsed_seconds": 186.8162152939476
+  },
+  "started_utc": "2026-08-30T01:56:47.078205+00:00",
+  "status": "complete",
+  "validation_all_passed": true
+}

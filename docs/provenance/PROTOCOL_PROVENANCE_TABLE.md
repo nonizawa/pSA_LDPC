@@ -1,0 +1,25 @@
+# Study-design provenance and interpretation table
+
+The study designs below answer distinct questions and must not be merged into one effect estimate.
+
+| Study | Instances and sampling | Parameter relation | Statistical unit | Supported claim | Unsupported interpretation | Copied source |
+|---|---|---|---|---|---|---|
+| Independently optimized LDPC benchmark | One representative matrix per size; N=96/192/288; 2.0/2.5/3.0 dB; 10,000 trials/SNR/mode | pSA, additive, and finite-response modes independently optimized | Trial for BER/FER; seed batch for paired checks | Best-achieved representative-matrix BER/FER; additive BER reductions of 33.5%, 74.8%, and 81.8% | Code-ensemble robustness or a memory-only causal effect | `representative_ldpc_summary.csv` |
+| Matched causal controls | Same representative matrices; 10,000 trials/SNR/condition; ten paired seed batches | Fixed additive-optimized nonmemory parameters; rule-only controls; lambda=0.95/0.95/0.90 | Paired seed batch | Gain-only and normalized memory do not reproduce additive; no hidden high-lambda optimum | Independent optimization comparison among all controls | `matched_causal_control_summary.csv`; paired statistics and coefficient sweeps |
+| Response-alignment analysis | Same representative matrices; 3 sizes x 5 rules x 3 SNRs x 200 trajectories | Fixed additive-optimized parameters; shuffled derangement preserves the delayed-response distribution | Paired seed batch or trajectory | Bit-specific temporal alignment is necessary; additive lowers BER, syndrome, and back-flip probability in the tested cells | Shuffled memory as a separately optimized competitor | `response_alignment_condition_summary.csv`; trajectory summaries |
+| Initialization-robustness acquisition | Representative N=192/288 matrices at 2.5 dB; 200 trajectories/method/initialization/size | Fixed matched-control sets; all-zero, paired random, and paired channel-hard starts; zero response state | Trajectory or paired seed batch | Additive reach is 95.5%/95.0% from all-zero and 96--97% from alternative starts; controls remain at 0% | Independence from arbitrary initialization, SNR, matrix, or channel | `acquisition_natural_initialization_summary.csv`; `initialization_condition_summary.csv`; `initialization_paired_statistics.csv` |
+| Correct-start stability | Same sizes, SNR, and trajectory count; initialized at transmitted word with zero response memory | Separate counterfactual intervention | Trajectory | Additive post-acquisition stability after response history forms | Natural decoding success or acquisition rate | `post_acquisition_stability_summary.csv` |
+| Cross-code pSA-specific fixed transfer | Ten independent random-regular (3,6) matrices/size; 1000 trials/SNR/arm/code | Independently selected representative-matrix additive and pSA-specific packages transferred intact; no per-code retuning | Independent code realization | Additive wins BER and FER on 30/30 codes; median BER reductions 35.46%, 76.61%, 81.10% | Per-code optimization, arbitrary-ensemble universality, or finite-size scaling | `cross_code_three_way_summary.csv`; `cross_code_parameter_comparison.csv` |
+| Cross-code matched lambda=0 ablation | Same matrices, trials, SNRs, and seed design | Additive nonmemory parameters fixed; only lambda set to zero | Independent code realization | Rule-level causal effects of 59.90%, 97.46%, and 97.61% median BER reduction | Independently optimized or pSA-specific performance margin | `cross_code_level_summary.csv`; `cross_code_size_summary.csv` |
+| MAX-CUT boundary study | Evaluated campaign plus N=500 structural sweep; graph-specific design | Co-optimized modes and response-memory sweeps | Graph seed or condition as defined in source summaries | Marginal or conditional comparator; largest evaluated mean normalized-cut gain about 0.184% | Large improvement or universal memory benefit | `maxcut_summary.csv` |
+| Matched-$k_w$ 2-SAT control | N=500, alpha=1.20; same 30 formulas (13 satisfiable/17 unsatisfiable); 100 trials/formula/cell; 3000 cycles | Matched `kw`; rho grid includes exact rho=0 control; paired streams; all other parameters fixed | Formula for paired bootstrap | No independent finite-response benefit; primary rho=0.08 contrast worsens by 1.867% | Positive high-alpha response-memory claim, alpha dependence, or universal finite-response benefit | `matched_kw_response_surface.csv`; `matched_kw_2sat_statistics.csv` |
+
+## Fixed cross-code parameter sets
+
+| Size | additive package | pSA-specific package | matched comparator |
+|---|---|---|---|
+| N96/M48 | lambda=0.95; 25,600 cycles; piecewise; majority | lambda=0; 25,600 cycles; exponential; majority | additive package with lambda=0 |
+| N192/M96 | lambda=0.95; 19,200 cycles; cosine; best state | lambda=0; 19,200 cycles; linear; majority | additive package with lambda=0 |
+| N288/M144 | lambda=0.90; 25,600 cycles; cosine; best state | lambda=0; 25,600 cycles; linear; best state | additive package with lambda=0 |
+
+The complete parameter dictionaries, seed records, and matrix hashes will be included in the public archival release.

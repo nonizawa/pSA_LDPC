@@ -1,0 +1,37 @@
+{
+  "EbNo_dB": [
+    2.0,
+    2.5,
+    3.0
+  ],
+  "matrix_generation_seed": 0,
+  "paired_seed_batches": 10,
+  "parameter_source": "configs/ldpc/representative_benchmark.json (additive-optimized set)",
+  "seeds": [
+    20260826,
+    20268848,
+    20276870,
+    20284892,
+    20292914,
+    20300936,
+    20308958,
+    20316980,
+    20325002,
+    20333024
+  ],
+  "selected_lambda": {
+    "N192_M96": 0.95,
+    "N288_M144": 0.9,
+    "N96_M48": 0.95
+  },
+  "stochastic_seed_construction": "base_seed + 8022 * seed_batch_index",
+  "study": "matched causal controls",
+  "trials_per_snr_condition": 10000,
+  "variants": [
+    "matched pSA",
+    "additive",
+    "normalized",
+    "gain-only",
+    "shuffled response"
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "EbNo_dB": [
+    2.0,
+    2.5,
+    3.0
+  ],
+  "channel_input_mode": "float",
+  "code_ids": [
+    "existing_00",
+    "new_01",
+    "new_02",
+    "new_03",
+    "new_04",
+    "new_05",
+    "new_06",
+    "new_07",
+    "new_08",
+    "new_09"
+  ],
+  "config_hash": "adc8c7356703fed516148bfde6bc643ffba8f73a346b3ad46c39deb992e9290b",
+  "existing_raw_source": "source_project/phase3_results/multi_ldpc_20260827/raw_results.csv",
+  "fixed_bit_width": 8,
+  "matrix_source": "source_project/phase3_results/multi_ldpc_20260827",
+  "n_workers": 10,
+  "parameter_transfer_policy": "one representative-matrix pSA parameter set per size; no per-code retuning",
+  "public_code_ids": {
+    "existing_00": "C00",
+    "new_01": "C01",
+    "new_02": "C02",
+    "new_03": "C03",
+    "new_04": "C04",
+    "new_05": "C05",
+    "new_06": "C06",
+    "new_07": "C07",
+    "new_08": "C08",
+    "new_09": "C09"
+  },
+  "purpose": "pSA-specific fixed-transfer comparator",
+  "representative_parameter_sources": {
+    "N192_M96": "source_project/paper_results_trip/ldpc/N192_M96/pSA/best_params.csv",
+    "N288_M144": "source_project/paper_results_trip/ldpc/N288_M144/pSA/best_params.csv",
+    "N96_M48": "source_project/paper_results/ldpc/N96_M48/pSA/best_params.csv"
+  },
+  "seed_construction": "seed + 8022 * seed_batch_index (Phase 1 convention)",
+  "seed_count": 10,
+  "seeds": [
+    20260826,
+    20268848,
+    20276870,
+    20284892,
+    20292914,
+    20300936,
+    20308958,
+    20316980,
+    20325002,
+    20333024
+  ],
+  "simulation_scope": "new pSA-specific arm only; additive and matched-ablation rows reused",
+  "sizes": [
+    "N96_M48",
+    "N192_M96",
+    "N288_M144"
+  ],
+  "study_version": "2026-08-28-v1",
+  "trials_per_code_EbNo_arm": 1000
+}

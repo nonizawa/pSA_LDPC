@@ -1,0 +1,4 @@
+size,best_kappa,selection_objective,score,ber_score,fer_score,mean_BER,mean_FER,trials_per_EbNo
+N96_M48,0.25,minimum existing matched-control score; tie break BER score then grid order,0.5125314058609636,0.3743247135237389,0.3252001283527899,0.031828125000000006,0.31483333333333335,2000
+N192_M96,0.5,minimum existing matched-control score; tie break BER score then grid order,2.339088391738362,2.0836732764184944,1.2770755765993376,0.49981423611111114,1.0,2000
+N288_M144,0.75,minimum existing matched-control score; tie break BER score then grid order,0.6503115584720425,0.5321169578409667,0.2609730031553787,0.019359953703703702,0.13433333333333333,2000

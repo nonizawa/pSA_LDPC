@@ -1,0 +1,4 @@
+size,BER_optimal_kappa,score_selected_kappa,differs_from_primary_score_selection,sweep_mean_BER,sweep_mean_FER,interpretation
+N96_M48,0.25,0.25,False,0.031828125000000006,0.31483333333333335,secondary sensitivity only; primary objective is unchanged
+N192_M96,0.25,0.5,True,0.21051475694444446,0.9461666666666666,secondary sensitivity only; primary objective is unchanged
+N288_M144,0.75,0.75,False,0.019359953703703702,0.13433333333333333,secondary sensitivity only; primary objective is unchanged

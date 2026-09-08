@@ -1,0 +1,20 @@
+{
+  "representative_ldpc_ber_reduction": {
+    "N96_M48": 0.335,
+    "N192_M96": 0.7481072455615697,
+    "N288_M144": 0.818443
+  },
+  "cross_code_pooled_wins": {
+    "BER": 30,
+    "FER": 30,
+    "n_code_realizations": 30
+  },
+  "cross_code_median_ber_reduction": {
+    "N96_M48": 0.5990,
+    "N192_M96": 0.9746,
+    "N288_M144": 0.9761
+  },
+  "matched_kw_2sat_primary_treatment_minus_control": 0.00003944,
+  "matched_kw_2sat_primary_relative_worsening": 0.01867,
+  "maxcut_largest_evaluated_mean_normalized_cut_gain": 0.00184
+}

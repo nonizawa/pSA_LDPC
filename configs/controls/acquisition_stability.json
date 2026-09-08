@@ -1,0 +1,26 @@
+{
+  "EbNo_dB": 2.5,
+  "correct_start_trajectories_per_rule_size": 200,
+  "first_passage_censoring": "nonreaching trajectories are censored",
+  "matrix_generation_seed": 0,
+  "natural_initialization_trajectories_per_rule_size": 200,
+  "parameter_source": "configs/ldpc/representative_benchmark.json (additive-optimized set)",
+  "seeds": [
+    20260826,
+    20268848,
+    20276870,
+    20284892,
+    20292914,
+    20300936,
+    20308958,
+    20316980,
+    20325002,
+    20333024
+  ],
+  "sizes": [
+    "N192_M96",
+    "N288_M144"
+  ],
+  "stochastic_seed_construction": "base_seed + 8022 * seed_batch_index",
+  "study": "acquisition and post-acquisition stability"
+}

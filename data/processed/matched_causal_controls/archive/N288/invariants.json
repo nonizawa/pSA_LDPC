@@ -1,0 +1,13 @@
+{
+  "all_passed": true,
+  "extended_lambda_0p95_discriminant_matches_original": true,
+  "extended_lambda_0p95_history_matches_original": true,
+  "gain_only_pSA_lambda_zero_discriminant_matches_pSA": true,
+  "gain_only_pSA_lambda_zero_history_matches_pSA": true,
+  "lambda_pSA_extended_lambda_zero_discriminant_matches_pSA": true,
+  "lambda_pSA_extended_lambda_zero_history_matches_pSA": true,
+  "lambda_pSA_lambda_zero_discriminant_matches_pSA": true,
+  "lambda_pSA_lambda_zero_history_matches_pSA": true,
+  "lambda_pSA_normalized_lambda_zero_discriminant_matches_pSA": true,
+  "lambda_pSA_normalized_lambda_zero_history_matches_pSA": true
+}

@@ -1,0 +1,4 @@
+stage,size,variant,implementation_mode,kappa,EbNo_dB,BER,FER,syndrome_violation_rate,avg_syndrome_weight,BP_BER,BP_FER,n_trials,n_bits_total
+ber_optimal_sensitivity,N192_M96,binary_state_ber_optimal_sensitivity,binary_state_self_feedback,0.25,2.0,0.2556828125,0.9995,0.9937,13.5505,0.014819791666666667,0.1716,10000,1920000
+ber_optimal_sensitivity,N192_M96,binary_state_ber_optimal_sensitivity,binary_state_self_feedback,0.25,2.5,0.22063385416666667,0.9883,0.9811,11.8117,0.004305208333333334,0.0544,10000,1920000
+ber_optimal_sensitivity,N192_M96,binary_state_ber_optimal_sensitivity,binary_state_self_feedback,0.25,3.0,0.15824166666666667,0.8534,0.8474,8.5774,0.0010979166666666667,0.0158,10000,1920000

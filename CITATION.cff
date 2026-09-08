@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: "If you use this software or data, please cite the accompanying manuscript. Journal and DOI metadata will be added after publication."
+title: "Reproducibility package for Bit-Aligned Temporal Reinforcement in Probabilistic-Bit Dynamics for Robust LDPC Decoding"
+type: software
+version: 1.0.0-rc1
+authors:
+  - family-names: Onizawa
+    given-names: Naoya
+    affiliation: "Research Institute of Electrical Communication, Tohoku University"
+abstract: >-
+  Code, parameter configurations, instance metadata, processed data, lightweight
+  raw records, validation tests, and figure-reproduction tools supporting a
+  manuscript prepared for submission to Physical Review Applied.
+preferred-citation:
+  type: article
+  title: "Bit-Aligned Temporal Reinforcement in Probabilistic-Bit Dynamics for Robust LDPC Decoding"
+  authors:
+    - family-names: Onizawa
+      given-names: Naoya
+      affiliation: "Research Institute of Electrical Communication, Tohoku University"

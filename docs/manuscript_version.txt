@@ -1,0 +1,16 @@
+Manuscript title: Bit-Aligned Temporal Reinforcement in Probabilistic-Bit Dynamics for Robust LDPC Decoding
+Status: Prepared for submission to Physical Review Applied
+Synchronization date: 2026-09-07
+Source revision label: pra_manuscript_supplement_visual_cleanup_20260907
+Main PDF pages: 13
+Supplemental PDF pages: 28
+
+SHA-256:
+main.tex       f3203bf9dc5df465df3a767111b1b649748324b07558ec97976b49816e884beb
+main.pdf       af75df99c2924ce4dc53192346e6e6153fef62afa6f83726ca80c311a9cd492e
+supplement.tex ac9bcb358d414de6dd4f404c65df2d539ed617985e8ed5befc9073798d2c618d
+supplement.pdf 453217aaa3a360edf2255ed9a08e1e4ece0e0f28a376e6c0883ef87042045247
+
+The PDFs are not distributed in this code/data package. The synchronized TeX
+and bibliography records are retained in docs/source_records/ for mapping and
+audit. This file uses a source revision label rather than a private local path.

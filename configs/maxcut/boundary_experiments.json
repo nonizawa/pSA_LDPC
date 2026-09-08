@@ -1,0 +1,10 @@
+{
+  "study": "MAX-CUT boundary experiments",
+  "interpretation": "co-optimized endpoint comparison; effects are marginal or conditional",
+  "graph_families": ["Erdos-Renyi", "Barabasi-Albert", "Watts-Strogatz"],
+  "reported_summary": "data/processed/tables/maxcut_summary.csv",
+  "modes": ["pSA", "additive", "finite_response"],
+  "selected_parameter_records": "encoded in the processed summary and validated full-study driver",
+  "full_runtime": "not reliably recorded; depends strongly on graph family and optimization budget",
+  "gpu_used": false
+}

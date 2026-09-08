@@ -1,0 +1,85 @@
+{
+  "anchors": [
+    "lambda"
+  ],
+  "channel_input_mode": "float",
+  "command": [
+    "source_project/.venv-paper/bin/python",
+    "source_project/run_phase1_controls.py",
+    "--profile",
+    "full",
+    "--sizes",
+    "all",
+    "--anchors",
+    "lambda",
+    "--variants",
+    "additive,normalized,gain_only",
+    "--lambda-values",
+    "0,0.5,0.8,0.9,0.95,1.0,1.1,1.25,1.4",
+    "--trials",
+    "2000",
+    "--seed-count",
+    "8",
+    "--run-name",
+    "full_lambda_anchor_20260826",
+    "--n-workers",
+    "8"
+  ],
+  "condition_count": 84,
+  "config_hash": "17c9d8a7d8aad43edbc3c346d8e9e22d1cf3891e0d090178ae5be1fcf07cfbe6",
+  "cycles_override": null,
+  "eps": 1e-12,
+  "fer_weight": 0.2,
+  "fixed_bit_width": 8,
+  "lambda_values": [
+    0.0,
+    0.5,
+    0.8,
+    0.9,
+    0.95,
+    1.0,
+    1.1,
+    1.25,
+    1.4
+  ],
+  "matrix_seed": 0,
+  "n_workers": 8,
+  "profile": "full",
+  "seed_count": 8,
+  "seeds": [
+    20260826,
+    20268848,
+    20276870,
+    20284892,
+    20292914,
+    20300936,
+    20308958,
+    20316980
+  ],
+  "sizes": [
+    "N96_M48",
+    "N192_M96",
+    "N288_M144"
+  ],
+  "source_files": {
+    "N192_M96": {
+      "base": "source_project/paper_results_trip/ldpc/N192_M96",
+      "lambda": "source_project/paper_results_trip/ldpc/N192_M96/lambda_pSA/memory_sweep_summary.csv"
+    },
+    "N288_M144": {
+      "base": "source_project/paper_results_trip/ldpc/N288_M144",
+      "lambda": "source_project/paper_results_trip/ldpc/N288_M144/lambda_pSA/memory_sweep_summary.csv"
+    },
+    "N96_M48": {
+      "base": "source_project/paper_results/ldpc/N96_M48",
+      "lambda": "source_project/paper_results/ldpc/N96_M48/lambda_pSA/memory_sweep_summary.csv"
+    }
+  },
+  "syndrome_weight": 0.5,
+  "trials_per_ebno": 2000,
+  "variants": [
+    "additive",
+    "normalized",
+    "gain_only"
+  ]
+}

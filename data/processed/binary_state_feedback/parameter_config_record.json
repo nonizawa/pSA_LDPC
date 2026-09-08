@@ -1,0 +1,243 @@
+{
+  "EbNo_dB": [
+    2.0,
+    2.5,
+    3.0
+  ],
+  "PIMI_specific_features_not_reproduced": [
+    "PIMI-specific Gaussian noise",
+    "fully active synchronous organization",
+    "PIMI-specific schedule and dense-PIM configuration"
+  ],
+  "best_kappas": {
+    "N192_M96": 0.5,
+    "N288_M144": 0.75,
+    "N96_M48": 0.25
+  },
+  "binary_source": "s_i^(t)=2*w_i^(t)-1, same-bit common pre-update/current state",
+  "created_utc": "2026-08-30T09:25:39.067257+00:00",
+  "environment": {
+    "cpu_count": 16,
+    "hostname": "redacted-local-host",
+    "machine": "arm64",
+    "numpy": "2.2.6",
+    "platform": "macOS-26.5.2-arm64-arm-64bit",
+    "python": "3.10.7 (v3.10.7:6cc6b13308, Sep  5 2022, 14:02:52) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "python_executable": "source_project/.venv-paper/bin/python"
+  },
+  "equal_range_kappas": {
+    "N192_M96": 0.95,
+    "N288_M144": 0.9,
+    "N96_M48": 0.95
+  },
+  "equation": "d_i^(t)=q_i^(t)+kappa*s_i^(t)",
+  "fixed_nonmemory_parameters": {
+    "N192_M96": {
+      "I0_hold_fraction": 0.5645127352120207,
+      "I0_max": 0.7389920491353419,
+      "I0_min": 0.07744740706187082,
+      "I0_schedule_shape": 0.12421434807118831,
+      "I0_schedule_type": "cosine",
+      "alpha": 0.8016757269480528,
+      "alpha_mode": "snr",
+      "burn_in": 13837,
+      "decision_method": "best_state",
+      "kr": 3.928670043006602,
+      "kw": 3.8476037044406635,
+      "lambda_mem": 0.0,
+      "lambda_out": 0.0,
+      "n_cycles": 19200,
+      "nrnd": 0.0,
+      "psa_p": 0.46612896078723015,
+      "response_lambda": 0.0,
+      "sample_window": 5306
+    },
+    "N288_M144": {
+      "I0_hold_fraction": 0.3833464231826391,
+      "I0_max": 8.368513046598743,
+      "I0_min": 0.2268291997922201,
+      "I0_schedule_shape": 0.06910328208417126,
+      "I0_schedule_type": "cosine",
+      "alpha": 1.7203595365825695,
+      "alpha_mode": "fixed",
+      "burn_in": 25389,
+      "decision_method": "best_state",
+      "kr": 0.16929051772556775,
+      "kw": 0.1704565400035984,
+      "lambda_mem": 0.0,
+      "lambda_out": 0.0,
+      "n_cycles": 25600,
+      "nrnd": 0.0,
+      "psa_p": 0.40757725802361194,
+      "response_lambda": 0.0,
+      "sample_window": 196
+    },
+    "N96_M48": {
+      "I0_hold_fraction": 0.17104402970690782,
+      "I0_max": 1.2068953100209217,
+      "I0_min": 0.06227420018347679,
+      "I0_schedule_shape": 0.6168041411219677,
+      "I0_schedule_type": "piecewise",
+      "alpha": 0.5380278001391959,
+      "alpha_mode": "llr",
+      "burn_in": 3204,
+      "decision_method": "majority",
+      "kr": 4.956628075392035,
+      "kw": 4.615431610296137,
+      "lambda_mem": 0.0,
+      "lambda_out": 0.0,
+      "n_cycles": 25600,
+      "nrnd": 0.0,
+      "psa_p": 0.7313667301085667,
+      "response_lambda": 0.0,
+      "sample_window": 11294
+    }
+  },
+  "highstat": {
+    "seeds": [
+      20260826,
+      20268848,
+      20276870,
+      20284892,
+      20292914,
+      20300936,
+      20308958,
+      20316980,
+      20325002,
+      20333024
+    ],
+    "trials_per_EbNo": 10000
+  },
+  "kappa_grid_predeclared": [
+    0.0,
+    0.25,
+    0.5,
+    0.75,
+    0.9,
+    0.95,
+    1.0,
+    1.1,
+    1.25
+  ],
+  "manuscript_references": {
+    "main.pdf": {
+      "path": "source_project/pra_manuscript_package_level_cleanup_20260830/main.pdf",
+      "sha256": "deccee4f585efe3e2152680f5a057a49f6ce09e10410bd5f34ac691f96be8549"
+    },
+    "main.tex": {
+      "path": "source_project/pra_manuscript_package_level_cleanup_20260830/main.tex",
+      "sha256": "daf16f0212ee726e7e1efe0ee400ebb9f85455a81ac91163bc6d48535b59ab6b"
+    },
+    "supplement.pdf": {
+      "path": "source_project/pra_manuscript_package_level_cleanup_20260830/supplement.pdf",
+      "sha256": "c4c8ef8049d7e2210c68f875070140485ad0a9a23d03787efb8a19b5db86e21c"
+    },
+    "supplement.tex": {
+      "path": "source_project/pra_manuscript_package_level_cleanup_20260830/supplement.tex",
+      "sha256": "fd15ecd31396e8c89e251bba06ba5aeadd1af6ec94d000031c62fa46d391977e"
+    }
+  },
+  "matrices": {
+    "N192_M96": {
+      "column_degree_set": [
+        3
+      ],
+      "row_degree_set": [
+        6
+      ],
+      "sha256_array_bytes": "b9a46989f2722376619cc71afd84426abe1af5507d46bc165c0433a02688dba0",
+      "shape": [
+        96,
+        192
+      ]
+    },
+    "N288_M144": {
+      "column_degree_set": [
+        3
+      ],
+      "row_degree_set": [
+        6
+      ],
+      "sha256_array_bytes": "81f01feb3a5c38d584d949886057bb3ebcbc25c418c956e9aadfe9b10cd6eb55",
+      "shape": [
+        144,
+        288
+      ]
+    },
+    "N96_M48": {
+      "column_degree_set": [
+        3
+      ],
+      "row_degree_set": [
+        6
+      ],
+      "sha256_array_bytes": "07ab67627bf16616fbd8d2f8ea580dac437e8f96e85dadc415b821f9a609f56d",
+      "shape": [
+        48,
+        96
+      ]
+    }
+  },
+  "matrix_seed": 0,
+  "not_PIMI_reproduction": true,
+  "selection_objective": {
+    "definition": "existing matched-control score_candidate",
+    "score": "mean absolute log10 BER gap to BP + 0.2*FER gap + 0.5*syndrome violation",
+    "tie_break": "BER score then predeclared grid order"
+  },
+  "sources": {
+    "N192_M96": {
+      "parameter_file": "source_project/paper_results_trip/ldpc/N192_M96/lambda_pSA/memory_sweep_summary.csv",
+      "parameter_file_sha256": "a446f55bc6c31371851d6a44e4c49bc5fc944e8e15c47610cc7222c59efbf636",
+      "reference_file": "source_project/paper_results_trip/ldpc/N192_M96/comparison/bp_baseline.csv",
+      "reference_file_sha256": "69daa5690d24e754a0e11d00671aabc2e937aefc6e6696d75647f2eaca0a7c5a"
+    },
+    "N288_M144": {
+      "parameter_file": "source_project/paper_results_trip/ldpc/N288_M144/lambda_pSA/memory_sweep_summary.csv",
+      "parameter_file_sha256": "1bb1066da997cc15dc4ece328be49c57a580ea1fa68816541966f896728bb4c3",
+      "reference_file": "source_project/paper_results_trip/ldpc/N288_M144/comparison/bp_baseline.csv",
+      "reference_file_sha256": "3c0214eaf86d6565bba571e9919b30f84cb91c997c9ab2d0894b7280bddb3576"
+    },
+    "N96_M48": {
+      "parameter_file": "source_project/paper_results/ldpc/N96_M48/lambda_pSA/memory_sweep_summary.csv",
+      "parameter_file_sha256": "00e399f96faaf1ab409b4e6e00fc3185d95bb70f9949b89317f1bf2f229e4ac6",
+      "reference_file": "source_project/paper_results/ldpc/N96_M48/comparison/bp_baseline.csv",
+      "reference_file_sha256": "91f4581b1016535afaf125b9c4f80b71ec2489b89d02e660374d88ba2b2d34d9"
+    }
+  },
+  "study_name": "Binary-State Self-Feedback Control",
+  "sweep": {
+    "seeds": [
+      20260826,
+      20268848,
+      20276870,
+      20284892,
+      20292914,
+      20300936,
+      20308958,
+      20316980
+    ],
+    "trials_per_EbNo": 2000
+  },
+  "timing": "Jacobi pre-update state; hold checked before active candidate evaluation",
+  "trajectory": {
+    "EbNo_dB": 2.5,
+    "seeds": [
+      20260826,
+      20268848,
+      20276870,
+      20284892,
+      20292914,
+      20300936,
+      20308958,
+      20316980,
+      20325002,
+      20333024
+    ],
+    "sizes": [
+      "N192_M96",
+      "N288_M144"
+    ],
+    "trajectories_per_condition": 200
+  }
+}

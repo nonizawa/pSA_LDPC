@@ -1,0 +1,12 @@
+{
+  "all_passed": true,
+  "existing_phase2b_invariants_pass": true,
+  "generalized_kernel_all_zero_cycle_metrics_exact": true,
+  "generalized_kernel_all_zero_decoded_exact": true,
+  "generalized_kernel_all_zero_events_exact_when_initial_events_disabled": true,
+  "generalized_kernel_all_zero_final_exact": true,
+  "hard_decision_y_sign_matches_channel_value_sign": true,
+  "random_initialization_reproducible": true,
+  "random_initialization_stream_does_not_change_pbit_core_seed": true,
+  "response_state_initialized_to_zero_by_kernel": true
+}

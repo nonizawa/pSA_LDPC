@@ -1,0 +1,9 @@
+{
+  "all_passed": true,
+  "existing_seed_zero": true,
+  "matrix_hashes_unique": true,
+  "new_matrices_full_rank_no_duplicates": true,
+  "phase1_invariants_all_passed": true,
+  "phase2b_invariants_all_passed": true,
+  "registry_count_ok": true
+}

@@ -1,0 +1,21 @@
+{
+  "bootstrap_base_seed": 20260828,
+  "bootstrap_samples": 20000,
+  "bootstrap_unit": "independent_code_realization",
+  "paired_across_all_three_arms": true,
+  "seed_construction": "seed + 8022 * seed_batch_index (Phase 1 convention)",
+  "seeds": [
+    20260826,
+    20268848,
+    20276870,
+    20284892,
+    20292914,
+    20300936,
+    20308958,
+    20316980,
+    20325002,
+    20333024
+  ],
+  "source": "source_project/phase3_results/multi_ldpc_20260827/parameters_and_seeds.json",
+  "source_sha256": "15a14bb3e287e97220c679f7d002d02f86e7b0e3f6f2c516e3f1400b34e64e2b"
+}

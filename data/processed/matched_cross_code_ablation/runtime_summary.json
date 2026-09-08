@@ -1,0 +1,8 @@
+{
+  "elapsed_seconds_full_compute": 4959.740547374822,
+  "elapsed_seconds_this_invocation": 1.5451065828092396,
+  "estimated_performance_bit_updates": 811008000000,
+  "estimated_performance_bit_updates_per_second_full_compute": 163518230.894006,
+  "mechanism_trajectory_count": 900,
+  "performance_raw_row_count": 1800
+}

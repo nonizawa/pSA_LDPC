@@ -1,0 +1,23 @@
+{
+  "validation_type": "two-trial deterministic kernel check",
+  "size": "N96_M48",
+  "code_id": "existing_00",
+  "public_code_id": "C00",
+  "EbNo_dB": 2.5,
+  "seed": 20260826,
+  "n_trials": 2,
+  "same_seed_reproducible": true,
+  "implementation_mode": "pSA",
+  "lambda_mem": 0.0,
+  "response_lambda": 0.0,
+  "lambda_out": 0.0,
+  "first_run": {
+    "bit_errors": 0,
+    "frame_errors": 0,
+    "syndrome_violations": 0,
+    "n_bits_total": 192,
+    "BER": 0.0,
+    "FER": 0.0
+  },
+  "all_passed": true
+}

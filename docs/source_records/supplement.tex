@@ -1,0 +1,583 @@
+\documentclass[aps,prapplied,preprint,superscriptaddress,longbibliography,floatfix]{revtex4-2}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb,bm}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage[hidelinks]{hyperref}
+
+\graphicspath{{figures/}}
+\renewcommand{\thefigure}{S\arabic{figure}}
+\renewcommand{\thetable}{S\arabic{table}}
+\renewcommand{\thesection}{S\arabic{section}}
+\newcommand{\psa}{pSA}
+
+\begin{document}
+
+\title{Supplemental Material for ``Bit-Aligned Temporal Reinforcement in Probabilistic-Bit Dynamics for Robust LDPC Decoding''}
+\author{Naoya Onizawa}
+\affiliation{Research Institute of Electrical Communication, Tohoku University, Sendai 980--8577, Japan}
+\date{August 30, 2026}
+\maketitle
+
+This Supplemental Material reports the full control, trajectory, transfer, cross-problem, and validation evidence underlying the LDPC-centered main manuscript.  The independently optimized representative-code benchmark, matched-parameter interventions, binary-state control with only $\kappa$ separately swept, pSA-specific fixed transfer, matched $\lambda=0$ ablation, initialization-robustness validation, and matched-$k_w$ finite-response 2-SAT control remain separate throughout.
+
+\section{Study design and parameter audit}
+
+\begin{table}[ht]
+\caption{Study-level reproducibility records and their scientific roles.}
+\label{tabS:provenance}
+\small
+\begin{tabular}{@{}p{0.18\textwidth}p{0.34\textwidth}p{0.38\textwidth}@{}}
+\toprule
+\raggedright Study & \raggedright Archived machine-readable information & \raggedright Design role \tabularnewline
+\midrule
+\raggedright Independently optimized LDPC benchmark & \raggedright Per-mode outcomes, parameter sets, random seeds, and representative-matrix identifiers & \raggedright Best-achieved high-statistics performance on one fixed matrix per block length \tabularnewline
+\raggedright Matched causal controls & \raggedright Condition-level outcomes, paired seed-batch statistics, and coefficient sweeps & \raggedright Rule discrimination with the additive-optimized nonmemory parameters held fixed \tabularnewline
+\raggedright Binary-state self-feedback & \raggedright $\kappa$ sweep, equal-range endpoints, high-statistics selected comparators, paired statistics, and trajectory summaries & \raggedright Test whether same-bit binary inertia is sufficient to reproduce saturated-response reinforcement \tabularnewline
+\raggedright Response-alignment and trajectory diagnostics & \raggedright Condition, seed-batch, and trajectory summaries; derangement checks & \raggedright Bit-specific response alignment and dynamical observables \tabularnewline
+\raggedright Acquisition and stability & \raggedright All-zero, random, channel-hard, and correct-start trajectory summaries; paired initialization metadata & \raggedright Correct-basin acquisition, initialization robustness, and conditional post-acquisition stability \tabularnewline
+\raggedright Cross-code transfer robustness & \raggedright Three-arm code-level outcomes, complete packages, seeds, matrix hashes, and rank checks & \raggedright Package-level pSA-specific fixed-transfer comparison and separate matched $\lambda=0$ rule ablation \tabularnewline
+\raggedright Matched-$k_w$ 2-SAT control & \raggedright Formula-level response surface, paired statistics, formula identifiers, and satisfiability labels & \raggedright Independent finite-response effect after removing $k_w$ coupling \tabularnewline
+\bottomrule
+\end{tabular}
+\end{table}
+
+For the cross-code transfer study, complete size-specific parameter dictionaries and seed records are retained in machine-readable form.  Table~\ref{tabS:parameters} compares the additive and pSA-specific packages; values shown to more digits are recorded parameter values, not claims of physical precision.  The matched $\lambda=0$ ablation uses the additive column at each size with only $\lambda$ set to zero.
+
+\clearpage
+
+\begin{table}[ht]
+\caption{Fixed additive and pSA-specific packages used for cross-code transfer.  Additive (A) and pSA-specific (P) packages were independently selected on the representative matrix and transferred without per-code retuning.  The matched ablation uses A with $\lambda=0$.}
+\label{tabS:parameters}
+\scriptsize
+\begin{ruledtabular}
+\begin{tabular}{lcccccc}
+& \multicolumn{2}{c}{$N=96$} & \multicolumn{2}{c}{$N=192$} & \multicolumn{2}{c}{$N=288$} \\
+Field & A & P & A & P & A & P \\
+\hline
+$\lambda$ & 0.95 & 0 & 0.95 & 0 & 0.90 & 0 \\
+cycles & 25,600 & 25,600 & 19,200 & 19,200 & 25,600 & 25,600 \\
+schedule & piecewise & exponential & cosine & linear & cosine & linear \\
+$I_{0,\min}$ & 0.062274 & 0.030036 & 0.077447 & 0.329820 & 0.226829 & 0.288425 \\
+$I_{0,\max}$ & 1.20690 & 8.90735 & 0.738992 & 7.86812 & 8.36851 & 9.23865 \\
+schedule shape & 0.616804 & 1.14992 & 0.124214 & 0.050627 & 0.069103 & 4.33860 \\
+initial plateau & 0.171044 & 0.247503 & 0.564513 & 0.233693 & 0.383346 & 0.826974 \\
+$p_{\mathrm{hold}}$ & 0.731367 & 0.669070 & 0.466129 & 0.786535 & 0.407577 & 0.843957 \\
+$k_w$ & 4.61543 & 6.07160 & 3.84760 & 0.343024 & 0.170457 & 6.57492 \\
+$k_r$ & 4.95663 & 8.70124 & 3.92867 & 0.326247 & 0.169291 & 6.67830 \\
+channel scaling & LLR: 0.5380 & SNR: 1.4080 & SNR: 0.8017 & LLR: 1.0318 & fixed: 1.7204 & LLR: 0.9567 \\
+burn-in & 3,204 & 13,349 & 13,837 & 12,836 & 25,389 & 10,774 \\
+sample window & 11,294 & 3,503 & 5,306 & 3,856 & 196 & 7,843 \\
+readout & majority & majority & best state & majority & best state & best state \\
+\end{tabular}
+\end{ruledtabular}
+\end{table}
+
+In the source records, \texttt{I0\_hold\_fraction} denotes the initial-schedule plateau fraction and affects $I_0^{(t)}$ only for the piecewise schedule; the stored cosine-schedule values are inactive.  By contrast, \texttt{psa\_p} denotes $p_{\mathrm{hold}}$, the independent per-bit, per-cycle probability of suppressing both state and response-state commitment, with activation probability $1-p_{\mathrm{hold}}$.  These quantities are not interchangeable.
+
+The ten stochastic seeds used in the cross-code study are generated as $20260826+8022j$ for $j=0,\ldots,9$.  The same code matrices, channel and stochastic seed design, and initial states are used for all three arms.  Each independently selected package retains its own recorded readout; in particular, the $N=192$ pSA-specific package uses majority readout while the additive and matched-ablation packages use best-state readout.  Matrix-generation seeds and SHA-256 hashes of every matrix are retained in the code-level metadata.  The additive/matched configuration record has hash prefix \texttt{f96f4a3806b4}.
+
+\section{Independently optimized representative LDPC benchmark}
+
+The representative-code benchmark independently optimizes \psa{}, additive $\lambda$-pSA, and finite-response $\tau$-pSA for one fixed matrix at each size.  Figure~\ref{figS:N96} supplies the $N=96$ BER panel omitted from the five-figure main-text layout.  Its comparison design is the same as main Fig.~2, not the matched-parameter intervention.
+
+\subsection{Representative-code parameter optimization}
+
+For every block length and algorithmic mode, a separate Optuna tree-structured Parzen estimator search evaluated 1000 candidate packages at $E_b/N_0=2.0$, 2.5, and 3.0 dB.  Each initial candidate used 160 trials per SNR and one candidate-specific stochastic stream.  The search varied $k_w$, $k_r$, channel scaling and its fixed/SNR/LLR convention, $p_{\mathrm{hold}}$, cycle count, $I_{0,\min}$, $I_{0,\max}$, schedule family and shape, initial plateau fraction, readout, burn-in, and sampling window; it additionally varied $\lambda\in[0,0.95]$ for additive dynamics or $\rho\in[0,0.99]$ for finite-response dynamics.  The continuous domains were $k_w\in[0.05,8]$, $k_r\in[0.05,12]$, channel-scale coefficient $\alpha\in[0.05,8]$, $I_{0,\min}\in[0.03,3]$, $I_{0,\max}\in[I_{0,\min},12]$ (all log sampled), schedule shape in $[0.05,10]$ (log sampled), initial plateau fraction in $[0,0.9]$, and $p_{\mathrm{hold}}\in[0,1]$ for \psa{} and additive $\lambda$-pSA or $[0,0.8]$ for finite-response $\tau$-pSA.  Schedule choices were linear, constant, exponential, cosine, and piecewise; readout choices were final state, post-burn-in majority, and best visited state.  The cycle choices were $\{9600,12800,19200,25600\}$ for $N=96$ and 288 and $\{6400,9600,12800,19200\}$ for $N=192$.
+
+Candidates were ranked by
+\begin{align*}
+S={}&\left\langle\left|\log_{10}(B_e+\epsilon)-\log_{10}(B_{\mathrm{BP},e}+\epsilon)\right|\right\rangle_e \notag\\
+&+0.2\left\langle\left|\log_{10}(F_e+\epsilon)-\log_{10}(F_{\mathrm{BP},e}+\epsilon)\right|\right\rangle_e
++0.5\left\langle V_e\right\rangle_e,
+\end{align*}
+where $B_e$, $F_e$, and $V_e$ are BER, FER, and the nonzero-syndrome fraction at SNR index $e$, $\epsilon=10^{-12}$, and the brackets denote an equal average over the three SNRs.  Ties in $S$ were resolved by the BER log-gap term; no additional scientific tie-break was specified for an exact residual tie.  The 32 lowest-score candidates were each reevaluated with 2000 total trials per SNR divided across six new seed streams.  The lowest-score refined package was then evaluated with 10,000 total trials per SNR divided across ten further seed streams.
+
+For \psa{}, this ten-stream evaluation is the reported high-statistics endpoint.  For the two response-state modes, the response coefficient alone was subsequently scanned while all other selected fields were fixed: a coarse grid from 0 to 0.95 in steps of 0.05 was combined with a step-0.02 grid within $\pm0.15$ of the confirmed coefficient, subject to the mode bounds.  Every grid point used 10,000 trials per SNR and its own sweep stream; the minimum-$S$ point, with the same BER-gap tie break and then ascending coefficient order for an exact residual tie, supplies the reported additive or finite-response endpoint.  Thus search, refinement, and coefficient-sweep streams are distinct, but the displayed response-state endpoint is the selected coefficient-grid evaluation itself rather than an additional held-out run.  Complete candidate-level search and seed records will accompany the public data release.
+
+\subsection{BP reference decoder}
+
+The BP reference is a custom NumPy implementation of the binary sum-product algorithm on the same fixed representative parity-check matrix used by the p-bit benchmark.  It uses a flooding schedule: variable-to-check messages are initialized to the clipped channel LLR, check-to-variable messages to zero, and every check update is completed before the variable and posterior updates of that iteration.  Channel and edge messages are clipped to $[-50,50]$, and the product entering $\operatorname{atanh}$ is clipped to $[-1+10^{-12},1-10^{-12}]$.  A posterior LLR below zero is decoded as bit one; a zero syndrome after a complete flooding iteration terminates decoding early, otherwise the decoder stops after 50 iterations.  With BPSK $0\mapsto+1$, $1\mapsto-1$ and code rate $R=\dim(G)/N$, the AWGN variance is $\sigma^2=[2R10^{(E_b/N_0)/10}]^{-1}$ and the channel LLR is $L_i=2y_i/\sigma^2$.  The BP curve uses 5000 random messages and noise realizations per SNR.  It shares the matrix, rate definition, channel model, and SNR values with the p-bit benchmark but uses separate Monte Carlo streams and is not paired trial by trial; conditional on the received vector, the decoder itself has no stochastic update.  No external decoding library is used.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.72\textwidth]{Fig2a_LDPC_BER_N96.pdf}
+\caption{Representative $N=96$ BER after independent per-mode optimization and 10,000 trials per $E_b/N_0$.}
+\label{figS:N96}
+\end{figure}
+
+\begin{table}[ht]
+\caption{Exact independently optimized representative-code outcomes by SNR.}
+\label{tabS:benchmark}
+\begin{ruledtabular}
+\begin{tabular}{cccccc}
+$N$ & $E_b/N_0$ & \multicolumn{2}{c}{BER} & \multicolumn{2}{c}{FER} \\
+ & (dB) & \psa{} & additive & \psa{} & additive \\
+\hline
+96 & 2.0 & 0.0381167 & 0.0255354 & 0.3856 & 0.2617 \\
+96 & 2.5 & 0.0203219 & 0.0134563 & 0.2466 & 0.1772 \\
+96 & 3.0 & 0.00982292 & 0.00639792 & 0.1525 & 0.1166 \\
+192 & 2.0 & 0.0546740 & 0.0176484 & 0.5461 & 0.1314 \\
+192 & 2.5 & 0.0264776 & 0.00419792 & 0.2888 & 0.0375 \\
+192 & 3.0 & 0.00958646 & 0.00100990 & 0.1145 & 0.0111 \\
+288 & 2.0 & 0.0770594 & 0.0178858 & 0.7020 & 0.1535 \\
+288 & 2.5 & 0.0342743 & 0.00347292 & 0.3805 & 0.0346 \\
+288 & 3.0 & 0.00941979 & 0.000564931 & 0.1303 & 0.0066 \\
+\end{tabular}
+\end{ruledtabular}
+\end{table}
+
+\section{Matched causal controls}
+
+The matched causal-control study fixes the size-specific additive-optimized parameter set, shares seed streams across variants, and compares additive, matched \psa{}, normalized memory, and gain-only.  Table~\ref{tabS:controls} reports the 10,000-trial evaluation pooled equally over the three SNRs.  The independently optimized \psa{} column is included only to connect the matched-parameter evaluation with the representative-code benchmark; it is not paired to the control variants.
+
+\begin{table}[ht]
+\caption{High-statistics matched-control summary.}
+\label{tabS:controls}
+\begin{ruledtabular}
+\begin{tabular}{lcccccc}
+$N$ & $\lambda$ & Optimized \psa{} & Additive & Matched \psa{} & Normalized & Gain-only \\
+\hline
+96  & 0.95 & 0.022754 & 0.015403 & 0.035198 & 0.060372 & 0.031136 \\
+192 & 0.95 & 0.030246 & 0.007365 & 0.281805 & 0.315129 & 0.499692 \\
+288 & 0.90 & 0.040251 & 0.007597 & 0.322369 & 0.338275 & 0.322310 \\
+\end{tabular}
+\end{ruledtabular}
+\end{table}
+
+The paired control-minus-additive BER intervals over seed batches are positive in all nine comparisons.  The additive coefficient sweep shows an $N=96$ plateau over approximately 0.90--1.25, an $N=192$ optimum near 0.95, and an $N=288$ optimum near 0.90.  No size shows continuing improvement at the enlarged upper boundary.  At $\lambda=0$, all four kernels are trajectory-identical under common random streams.  Independent additive implementations agree trajectory by trajectory throughout the evaluated $\lambda\leq0.95$ range.
+
+\section{Binary-state self-feedback control}
+
+The stored-quantity control uses the same Jacobi pre-update bit state as the local-field evaluation,
+\begin{equation}
+d_{i,\mathrm{bin}}^{(t)}=q_i^{(t)}+\kappa x_i^{(t)}.
+\label{eqS:binaryfeedback}
+\end{equation}
+There is no separate response state in this rule.  A held bit keeps its binary state under the common activation mask, and $\kappa=0$ is trajectory-identical to matched \psa{} under common random streams.  Equation~(\ref{eqS:binaryfeedback}) is a PIMI-inspired stored-quantity control, not a reproduction of PIMI: the noise distribution, schedule, stochastic partial activation, and LDPC workload differ.
+
+Two estimands are retained separately.  The equal-range comparison sets $\kappa=\lambda$ so that binary and additive rules have the same maximum deterministic range.  The best-performance comparison sweeps $\kappa$ and then subjects the selected binary comparator to the same 10,000-trial-per-SNR evaluation used for publication-facing controls.  The prespecified sweep score was
+\begin{align*}
+S_\kappa={}&\left\langle\left|\log_{10}(B_{\kappa,e}+\epsilon)
+-\log_{10}(B_{\mathrm{BP},e}+\epsilon)\right|\right\rangle_e \\
+&+0.2\left\langle\left|\log_{10}(F_{\kappa,e}+\epsilon)
+-\log_{10}(F_{\mathrm{BP},e}+\epsilon)\right|\right\rangle_e
++0.5\left\langle V_{\kappa,e}\right\rangle_e,
+\end{align*}
+where $B$, $F$, and $V$ denote BER, FER, and the nonzero-syndrome fraction, respectively, $\epsilon=10^{-12}$, and $\langle\cdot\rangle_e$ is an equal average over $E_b/N_0=2.0$, 2.5, and 3.0 dB after pooling the 2000 trials per SNR across seed batches.  The minimum over the predeclared $\kappa$ grid was selected; ties were broken by the BER-only log-gap term and then by grid order.  Figure~\ref{figS:binary-sweep} reports selection, and Fig.~\ref{figS:binary-highstat} reports the high-statistics endpoint comparison.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.94\textwidth]{FigS_binary_kappa_sweep.pdf}
+\caption{Binary-state self-feedback BER as a function of $\kappa$ under the fixed matched-control nonmemory parameters.  The prespecified score selects $\kappa=0.25$, 0.50, and 0.75 for $N=96,192,288$, respectively.}
+\label{figS:binary-sweep}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.94\textwidth]{FigS_binary_highstat_comparison.pdf}
+\caption{High-statistics additive, binary-state, and matched-\psa{} comparison.  The publication-facing $N=192$ binary bar uses the separately validated BER-favorable $\kappa=0.25$ sensitivity; the score-selected $\kappa=0.50$ outcome remains documented in Fig.~\ref{figS:binary-trajectory} and the text.}
+\label{figS:binary-highstat}
+\end{figure}
+
+\begin{table}[ht]
+\caption{Publication-facing binary-state self-feedback comparison pooled equally over the three SNRs.  Differences are binary minus additive BER with 95\% paired seed-batch intervals.}
+\label{tabS:binary-best}
+\begin{ruledtabular}
+\begin{tabular}{ccccc}
+$N$ & $\kappa$ & Binary BER & Additive BER & Difference [95\% interval] \\
+\hline
+96  & 0.25 & 0.0302868 & 0.0154035 & 0.0148833 $[0.0142088,0.0155578]$ \\
+192 & 0.25 & 0.211519  & 0.0073646 & 0.204155 $[0.203056,0.205253]$ \\
+288 & 0.75 & 0.0195231 & 0.0075966 & 0.0119265 $[0.0112603,0.0125927]$ \\
+\end{tabular}
+\end{ruledtabular}
+\end{table}
+
+At $N=96$ and 288, the score-selected values are also the BER- and FER-minimizing values on the evaluated grid.  At $N=192$, the score selects $\kappa=0.50$, but trajectory analysis shows a valid wrong-codeword freeze.  To avoid presenting that pathological score selection as the only binary comparator, the publication-facing table instead uses the separately high-statistics-validated, BER-favorable $\kappa=0.25$ sensitivity.  This substitution is conservative for the binary rule and is unique to $N=192$; it does not alter the archived score selection.
+
+The equal-range settings are $\kappa=\lambda=0.95$ for $N=96$ and 192 and $\kappa=\lambda=0.90$ for $N=288$.  Their binary BERs are 0.49951, 0.49981, and 0.34739, compared with additive BERs 0.01576, 0.00749, and 0.00740 and matched-\psa{} BERs 0.03581, 0.28087, and 0.32236.  Thus amplitude matching does not reproduce the additive rule, but these endpoints are not substituted for the best-$\kappa$ estimand in Table~\ref{tabS:binary-best}.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.94\textwidth]{FigS_binary_trajectory_mechanism.pdf}
+\caption{Targeted binary-state trajectory evidence at 2.5 dB.  At $N=192$, score-selected $\kappa=0.50$ reaches a motionless valid but wrong codeword; at $N=288$, $\kappa=0.75$ materially improves acquisition but remains less accurate than additive saturated-response reinforcement.}
+\label{figS:binary-trajectory}
+\end{figure}
+
+With 200 trajectories per method and size, the $N=192$ score-selected binary rule acquires the transmitted word in 0\% of trajectories, has decoded and late BER about 0.497, and reaches zero syndrome with negligible late motion.  At $N=288$, binary feedback acquires the transmitted word in 93\% of trajectories and has post-hit residence one, but decoded BER is 0.01054 rather than the additive value 0.00595; additive acquisition is 95\%.  Binary-state inertia can therefore contribute substantially without reproducing the full saturated-response benefit.
+
+\section{Response alignment and trajectory diagnostics}
+
+The trajectory analysis contains 9000 trajectories: three sizes, five rules, three SNRs, and 200 trajectories per cell.  Figure~\ref{figS:alignment-summary} summarizes the key 2.5-dB diagnostics, and Fig.~\ref{figS:alignment-dynamics} provides all size-resolved temporal panels.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.82\textwidth]{FigS_response_alignment_summary.pdf}
+\caption{Response-alignment and trajectory diagnostics at 2.5 dB.  Points and error bars retain the means and 95\% intervals in the archived summaries.  Panel (a) uses a logarithmic scale; panels (b)--(d) use symmetric-log coordinates with a linear neighborhood of zero, so exact zeros are displayed without a positive plotting floor.  Labeled zero markers denote observed values of exactly zero.  N/A denotes methods for which no delayed response source is supplied and the used-product metric is therefore not applicable.  Small nonzero values in panels (c) and (d) are annotated in scientific notation.}
+\label{figS:alignment-summary}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.98\textwidth]{FigS_response_dynamics_by_size.pdf}
+\caption{Size-resolved trajectories with seed-resolved uncertainty bands.  Panels show normalized syndrome, instantaneous BER, total flip probability, back-flip probability, response lag product, and cosine alignment over the common analysis windows.}
+\label{figS:alignment-dynamics}
+\end{figure}
+
+\begin{table}[ht]
+\caption{Key response-alignment and trajectory values at 2.5 dB.  ``Used product'' is the product between the current response and the delayed source actually supplied to the update.}
+\label{tabS:alignment}
+\begin{ruledtabular}
+\begin{tabular}{lcccccccc}
+$N$ & \multicolumn{3}{c}{Decoded BER} & Add. synd./$M$ & \multicolumn{3}{c}{Late back-flip} & Used product \\
+ & Add. & \psa{} & Shuf. & & Add. & \psa{} & Shuf. & Shuf. \\
+\hline
+96  & 0.01583 & 0.03786 & 0.09583 & 0.01130 & 0.000515 & 0.005815 & 0.088996 & 0.001360 \\
+192 & 0.007370 & 0.28172 & 0.38367 & 0.004421 & 0.000363 & 0.14402 & 0.20390 & 0.000106 \\
+288 & 0.005226 & 0.32009 & 0.39649 & 0.002601 & 0.000170 & 0.17492 & 0.22871 & 0.000060 \\
+\end{tabular}
+\end{ruledtabular}
+\end{table}
+
+The derangement has no self-links.  Across the evaluated trajectories, the maximum absolute discrepancies between original and shuffled delayed-response distributions are $1.16\times10^{-17}$ for the mean and $5.90\times10^{-18}$ for the second moment.  The paired shuffled-minus-additive BER differences at 2.5 dB are 0.0800 $[0.0747,0.0853]$, 0.3763 $[0.3704,0.3822]$, and 0.3913 $[0.3865,0.3960]$ for $N=96,192,288$, respectively.  Brackets are 95\% intervals across ten paired seed-batch means.
+
+\section{Acquisition and post-acquisition stability}
+
+Default initialization and correct-start retention are distinct interventions.  The default study begins from the implementation's all-zero bit state and zero response state; because the transmitted codeword is randomly generated, the initial valid codeword is generally not the transmitted word.  The correct-start study places all methods at the transmitted word but initializes response memory to zero, thereby asking how the target is retained before a matching history has accumulated.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.94\textwidth]{FigS_acquisition_first_passage.pdf}
+\caption{Default all-zero-initialization first-passage analysis.  Nonreaching trajectories remain censored; reach fractions are reported separately rather than assigned an artificial passage time.}
+\label{figS:firstpassage}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.94\textwidth]{FigS_post_acquisition_stability.pdf}
+\caption{Correct-start retention challenge.  Every method begins at the transmitted codeword with zero response memory.  Points retain the archived values and existing intervals.  Labeled zero markers denote observed values of exactly zero; panels (b)--(d) use symmetric-log coordinates with a linear neighborhood of zero and no substituted positive floor.  Positive values below $10^{-3}$ are annotated in scientific notation.  All four metrics are defined for every method in this intervention.  This intervention must not be read as a default-initialization decoding success rate.}
+\label{figS:retention}
+\end{figure}
+
+\begin{table}[ht]
+\caption{Default-initialization acquisition and post-hit residence at 2.5 dB; 200 trajectories per method and size.}
+\label{tabS:acquisition-stability}
+\begin{ruledtabular}
+\begin{tabular}{llccccc}
+$N$ & Method & Decoded BER & Correct reach & Median / mean FPT & Residence & Escape/cycle \\
+\hline
+192 & \psa{} & 0.2892 & 0 & censored & -- & -- \\
+192 & additive & 0.00680 & 0.955 & 444 / 1335 & 0.999986 & $5.28\times10^{-6}$ \\
+192 & gain-only & 0.4972 & 0 & censored & -- & -- \\
+192 & shuffled & 0.3869 & 0 & censored & -- & -- \\
+288 & \psa{} & 0.3245 & 0 & censored & -- & -- \\
+288 & additive & 0.00595 & 0.950 & 425 / 1261 & 0.999982 & $3.46\times10^{-6}$ \\
+288 & gain-only & 0.3225 & 0 & censored & -- & -- \\
+288 & shuffled & 0.3961 & 0 & censored & -- & -- \\
+\end{tabular}
+\end{ruledtabular}
+\end{table}
+
+In the correct-start challenge, additive residence is 0.9176 at $N=192$ and 0.9020 at $N=288$; conditional return probabilities after escape are approximately 0.9587 and 0.9628.  \psa{} and shuffled memory leave immediately and have zero residence at the sampled resolution.  Gain-only has residence one at $N=192$ but zero at $N=288$, further demonstrating that residence without channel-consistent acquisition is not a transferable success mechanism.
+
+The $N=192$ gain-only default-initialization trajectories freeze at zero syndrome and zero late flip rate, but late BER is 0.497 and normalized channel alignment is 0.0074.  The additive values are 0.0066 and 0.695.  This is the valid-wrong-codeword counterexample used in the main text.
+
+\subsection{Initialization robustness}
+
+We tested whether the acquisition result above depends on starting from the valid all-zero codeword.  The same representative $N=192$ and 288 matrices, 2.5-dB channel, fixed matched-control parameter sets, four response rules, ten paired seed batches, and 200 trajectories per method and initialization were retained.  No parameter was retuned.  A random start draws each stored bit independently and equiprobably from zero or one using a dedicated initialization stream; a channel-hard start sets bit one exactly when the received BPSK sample is negative.  Within a paired trajectory all methods receive the same channel realization and initial state, and the response state is zero.
+
+\begin{table}[ht]
+\caption{Initial-state diagnostics for the alternative-initialization study.  Syndrome is normalized by the number of checks.}
+\label{tabS:init-diagnostics}
+\begin{ruledtabular}
+\begin{tabular}{llccc}
+$N$ & Initialization & Initial BER & Syndrome & Channel alignment \\
+\hline
+192 & random & 0.5017 & 0.5007 & 0.00015 \\
+192 & channel hard decision & 0.09237 & 0.3564 & 0.7691 \\
+288 & random & 0.4996 & 0.4971 & 0.00147 \\
+288 & channel hard decision & 0.09297 & 0.3522 & 0.8100 \\
+\end{tabular}
+\end{ruledtabular}
+\end{table}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.98\textwidth]{FigS_initialization_acquisition.pdf}
+\caption{Correct-codeword acquisition under all-zero, random, and channel-hard-decision initialization.  Each cell contains 200 trajectories at 2.5 dB under the fixed matched-control parameter set.  Markers on the zero baseline denote observed acquisition proportions of exactly zero, rather than missing or inapplicable data.  Error bars are the existing binomial Wilson intervals for the displayed acquisition proportion; the paired method contrasts are reported separately in the text.}
+\label{figS:init-acquisition}
+\end{figure}
+
+\begin{table}[ht]
+\caption{Alternative-initialization decoding and acquisition outcomes.  First-passage time (FPT) is summarized only for additive trajectories that reach the transmitted codeword.}
+\label{tabS:init-outcomes}
+\scriptsize
+\begin{ruledtabular}
+\begin{tabular}{llcccccccc}
+& & \multicolumn{4}{c}{Correct reach} & \multicolumn{2}{c}{Decoded BER} & \multicolumn{2}{c}{Additive post-hit} \\
+$N$ & Initialization & \psa{} & Add. & Gain & Shuf. & \psa{} & Add. & FPT median/mean & Residence \\
+\hline
+192 & random & 0 & 0.96 & 0 & 0 & 0.2831 & 0.00583 & 436.5/1431 & 0.999231 \\
+192 & channel hard & 0 & 0.96 & 0 & 0 & 0.2836 & 0.00591 & 500.5/1399 & 0.999986 \\
+288 & random & 0 & 0.96 & 0 & 0 & 0.3237 & 0.00458 & 548/1337 & 0.999996 \\
+288 & channel hard & 0 & 0.97 & 0 & 0 & 0.3208 & 0.00345 & 457/1678 & 0.999962 \\
+\end{tabular}
+\end{ruledtabular}
+\end{table}
+
+The additive-minus-matched-\psa{} acquisition differences and 95\% intervals are 96.0 $[92.7,99.3]$ and 96.0 $[93.2,98.8]$ percentage points at $N=192$, and 96.0 $[91.6,100.4]$ and 97.0 $[94.0,100.0]$ percentage points at $N=288$, for random and channel-hard starts, respectively.  These are unbounded paired-$t$ intervals over the same ten prespecified seed-batch differences used by the matched trajectory framework.  They are not clipped to the probability-difference range; the 100.4\% upper endpoint is therefore a finite-sample interval endpoint, not a probability estimate.  We retain this construction for consistency rather than selecting a different interval method for this validation alone.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.98\textwidth]{FigS_initialization_first_passage.pdf}
+\caption{Censored cumulative correct-codeword reach under the three initializations.  Nonreaching trajectories are not assigned the terminal cycle.  Because matched \psa{} does not reach the correct word in any cell, an additive-versus-\psa{} conditional FPT difference is undefined rather than imputed.}
+\label{figS:init-firstpassage}
+\end{figure}
+
+Across the four alternative-initialization cells, additive late instantaneous BER is 0.0038--0.0058, compared with 0.328--0.341 for matched \psa{}.  Additive post-hit residence remains above 0.9992.  Gain-only and shuffled memory acquire the transmitted codeword in zero trajectories in every cell.  Thus the acquisition advantage is not an artifact of the valid all-zero start for the tested representative matrices, block lengths, SNR, and initialization rules; broader initial-state, channel, and code-ensemble dependence is not established.
+
+\section{Cross-code transfer robustness}
+
+The fixed-transfer evaluation has three distinct arms.  The additive and pSA-specific packages were independently selected on the representative matrix for each block length and then transferred intact to the same C00--C09 matrices without per-code retuning.  This is a package-level performance comparison: each independently selected package retains its own readout and other recorded fields, as documented in Table~\ref{tabS:parameters}.  The matched $\lambda=0$ ablation instead uses the additive package with only its response coefficient removed, so its readout and all nonmemory parameters remain identical to the additive arm.  All arms use the same code instances, SNRs, stochastic seed design, channel generation, and initialization.  Main Fig.~5 gives the three-way code-level BERs.
+
+\begin{table}[ht]
+\caption{Median relative error-rate reduction of additive fixed transfer against the two fixed-transfer comparators.  Brackets are 95\% percentile intervals from 20,000 bootstrap resamples of the ten independent code realizations.}
+\label{tabS:transfer-effects}
+\begin{ruledtabular}
+\begin{tabular}{clcc}
+$N$ & Comparator & BER reduction (\%) & FER reduction (\%) \\
+\hline
+96  & pSA-specific & 35.46 $[32.29,38.83]$ & 42.80 $[38.84,45.12]$ \\
+192 & pSA-specific & 76.61 $[74.81,77.17]$ & 81.81 $[79.71,82.84]$ \\
+288 & pSA-specific & 81.10 $[80.66,81.84]$ & 82.56 $[82.08,83.00]$ \\
+96  & matched $\lambda=0$ & 59.90 $[58.37,61.14]$ & 62.70 $[62.25,65.15]$ \\
+192 & matched $\lambda=0$ & 97.46 $[97.29,97.56]$ & 94.22 $[93.42,94.53]$ \\
+288 & matched $\lambda=0$ & 97.61 $[97.56,97.70]$ & 92.85 $[92.63,93.13]$ \\
+\end{tabular}
+\end{ruledtabular}
+\end{table}
+
+The additive fixed-transfer package has lower BER and FER than the pSA-specific fixed-transfer package for all 30 code realizations.  The pSA-specific comparator is the package-level performance baseline; the larger matched-ablation effects isolate the response-rule change under additive-selected nonmemory parameters and readout and are not independently optimized margins.  Figure~\ref{figS:crosscode-summary} retains the matched-ablation size summary for that causal comparison, while Fig.~\ref{figS:crosscode-mechanism} summarizes trajectory diagnostics for nine sampled matrices.  Additive dynamics have higher correct-basin acquisition and lower late back-flip probability in all nine.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.88\textwidth]{FigS_cross_code_size_summary.pdf}
+\caption{Code-level BER and FER changes relative to the matched $\lambda=0$ ablation under fixed size-specific parameter transfer.  These reductions are causal rule-ablation effects; the pSA-specific fixed-transfer comparison is reported in main Fig.~5 and Table~\ref{tabS:transfer-effects}.}
+\label{figS:crosscode-summary}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.98\textwidth]{FigS_cross_code_mechanism.pdf}
+\caption{Mechanism sampling on nine independent code realizations.  The general transferable descriptor is post-acquisition stability: at $N=96$, faster return can matter even when escape frequency alone is not lower.}
+\label{figS:crosscode-mechanism}
+\end{figure}
+
+\clearpage
+\begingroup
+\small
+\setlength{\tabcolsep}{5pt}
+\renewcommand{\arraystretch}{1.05}
+\begin{longtable}{lrrrrr}
+\caption{Code-level additive and matched-$\lambda=0$ outcomes for the 30 transferred code realizations.  BER and FER are pooled over the three SNRs; Red. denotes the additive BER reduction relative to the matched arm.  The pSA-specific results are shown in main Fig.~5.}
+\label{tabS:codes}\\
+\toprule
+\multicolumn{6}{c}{\textbf{(a)} $N=96$} \\
+\cmidrule(lr){1-6}
+Code & Matched BER & Add. BER & Red. (\%) & Matched FER & Add. FER \\
+\midrule
+C00 & 0.03576 & 0.01561 & 56.35 & 0.3740 & 0.1793 \\
+C01 & 0.03420 & 0.01339 & 60.84 & 0.3047 & 0.1030 \\
+C02 & 0.03487 & 0.01414 & 59.46 & 0.3250 & 0.1213 \\
+C03 & 0.03574 & 0.01452 & 59.36 & 0.3190 & 0.1193 \\
+C04 & 0.03337 & 0.01383 & 58.57 & 0.3047 & 0.1147 \\
+C05 & 0.03570 & 0.01416 & 60.34 & 0.3133 & 0.1193 \\
+C06 & 0.03376 & 0.01312 & 61.14 & 0.3017 & 0.1000 \\
+C07 & 0.03399 & 0.01449 & 57.38 & 0.3050 & 0.1137 \\
+C08 & 0.03608 & 0.01401 & 61.18 & 0.3213 & 0.1153 \\
+C09 & 0.03385 & 0.01298 & 61.66 & 0.3023 & 0.1067 \\
+\midrule
+\multicolumn{6}{c}{\textbf{(b)} $N=192$} \\
+\cmidrule(lr){1-6}
+Code & Matched BER & Add. BER & Red. (\%) & Matched FER & Add. FER \\
+\midrule
+C00 & 0.28130 & 0.00763 & 97.29 & 0.9997 & 0.0603 \\
+C01 & 0.28173 & 0.00774 & 97.25 & 1.0000 & 0.0713 \\
+C02 & 0.28082 & 0.00686 & 97.56 & 1.0000 & 0.0563 \\
+C03 & 0.28261 & 0.00675 & 97.61 & 0.9997 & 0.0547 \\
+C04 & 0.28251 & 0.00783 & 97.23 & 1.0000 & 0.0717 \\
+C05 & 0.28336 & 0.00628 & 97.78 & 1.0000 & 0.0527 \\
+C06 & 0.28149 & 0.00699 & 97.52 & 1.0000 & 0.0610 \\
+C07 & 0.28260 & 0.00754 & 97.33 & 1.0000 & 0.0590 \\
+C08 & 0.28201 & 0.00701 & 97.51 & 1.0000 & 0.0533 \\
+C09 & 0.28216 & 0.00733 & 97.40 & 1.0000 & 0.0567 \\
+\pagebreak[4]
+\midrule
+\multicolumn{6}{c}{\textbf{(c)} $N=288$} \\
+\cmidrule(lr){1-6}
+Code & Matched BER & Add. BER & Red. (\%) & Matched FER & Add. FER \\
+\midrule
+C00 & 0.32279 & 0.00773 & 97.61 & 1.0000 & 0.0707 \\
+C01 & 0.32230 & 0.00798 & 97.52 & 1.0000 & 0.0783 \\
+C02 & 0.32287 & 0.00768 & 97.62 & 1.0000 & 0.0737 \\
+C03 & 0.32326 & 0.00733 & 97.73 & 1.0000 & 0.0687 \\
+C04 & 0.32218 & 0.00761 & 97.64 & 1.0000 & 0.0717 \\
+C05 & 0.32234 & 0.00785 & 97.57 & 1.0000 & 0.0713 \\
+C06 & 0.32247 & 0.00811 & 97.49 & 1.0000 & 0.0740 \\
+C07 & 0.32295 & 0.00743 & 97.70 & 1.0000 & 0.0687 \\
+C08 & 0.32223 & 0.00715 & 97.78 & 1.0000 & 0.0677 \\
+C09 & 0.32262 & 0.00777 & 97.59 & 1.0000 & 0.0727 \\
+\bottomrule
+\end{longtable}
+\endgroup
+\clearpage
+
+All 30 rows favor the additive response rule in BER and FER against the matched ablation.  Code labels C00--C09 are presentation labels linked to matrix hashes in the archived metadata.  With 20,000 code-level bootstrap resamples, the median relative BER reduction at $N=96$ is 59.90\%, with interval $[58.37,61.14]\%$.  The corresponding values are 97.46\% $[97.29,97.56]\%$ at $N=192$ and 97.61\% $[97.56,97.70]\%$ at $N=288$.  These matched-ablation values are not substituted for the pSA-specific fixed-transfer effects in Table~\ref{tabS:transfer-effects}.
+
+\section{Cross-problem boundary controls}
+
+These experiments test for a generic endpoint advantage from temporal state, but they do not constitute a matched causal test of the additive LDPC rule across problems.  MAX-CUT outcomes are co-optimized, whereas random 2-SAT uses a matched-$k_w$ finite-response $\rho$ control.  They are not additional applications used to support the LDPC mechanism, and their objective scales are not compared directly with BER or FER.
+
+\subsection{MAX-CUT}
+
+For an undirected graph $G=(V,E)$ with adjacency matrix $A$, the cut represented by $x_i\in\{-1,+1\}$ is
+\begin{equation}
+C(\bm x)=\frac{1}{2}\sum_{(i,j)\in E}(1-x_i x_j).
+\label{eqS:maxcutvalue}
+\end{equation}
+The implementation minimizes
+\begin{align}
+\mathcal E_{\mathrm{MC}}(\bm x)
+&=k_w\sum_{(i,j)\in E}x_i x_j
+=k_w[|E|-2C(\bm x)],\notag\\
+F_{i,\mathrm{MC}}&=-k_w\sum_j A_{ij}x_j.
+\label{eqS:maxcutfield}
+\end{align}
+Endpoint quality is the mean cut normalized by $|E|$.  These experiments use their own tuning objectives and cannot be combined numerically with BER.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.88\textwidth]{FigS_MAXCUT_quality.pdf}
+\caption{Evaluated MAX-CUT endpoint quality.  Differences are small on the displayed scale and are reported as co-optimized outcomes.}
+\label{figS:maxcutquality}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.88\textwidth]{FigS_MAXCUT_memory_sweep.pdf}
+\caption{MAX-CUT memory sweeps.  Selected endpoints can occur at the memoryless boundary, so a mode label alone is not evidence for active response memory.}
+\label{figS:maxcutsweep}
+\end{figure}
+
+\begin{table}[ht]
+\caption{Selected MAX-CUT outcomes.  Gain is the mean normalized-cut change relative to \psa{}.}
+\label{tabS:maxcut}
+\begin{ruledtabular}
+\begin{tabular}{lccc}
+Condition & Best labeled mode & Coefficient & Gain (\%) \\
+\hline
+$N=1000$, ER $p=0.01$ & finite response & $\rho=0$ & 0.184 \\
+$N=1000$, ER $p=0.02$ & finite response & $\rho=0.12$ & 0.137 \\
+$N=500$, ER $p=0.06$ & finite response & $\rho=0.22$ & 0.030 \\
+$N=500$, ER $p=0.08$ & additive & $\lambda=0.57$ & 0.079 \\
+\end{tabular}
+\end{ruledtabular}
+\end{table}
+
+The broader $N=500$ structural campaign covers 14 density/topology conditions, ten graph seeds, and 100 trials per graph.  Only 5 of 14 mean-quality winners use a nonzero response coefficient, and all apparent mean normalized-cut gains remain below 0.2\%.  The evidence is therefore marginal or conditional.
+
+\subsection{Random 2-SAT matched-\texorpdfstring{$k_w$}{kw} control}
+
+A clause $c=(i,a;j,b)$ contains two signed literals, with $a,b\in\{-1,+1\}$ and literal $(i,a)$ true when $a x_i=+1$.  Its exact violation indicator is
+\begin{equation}
+V_c(\bm x)=\frac{(1-a x_i)(1-b x_j)}{4}.
+\label{eqS:clauseviolation}
+\end{equation}
+The implemented objective and local field are
+\begin{align}
+\mathcal E_{\mathrm{2SAT}}(\bm x)
+&=k_w\sum_c V_c(\bm x)
+=k_w\!\left(C_0+\sum_i h_i x_i+\sum_{i<j}J_{ij}x_i x_j\right),\notag\\
+F_{i,\mathrm{2SAT}}
+&=-k_w\left(h_i+\sum_jJ_{ij}x_j\right).
+\label{eqS:2satfield}
+\end{align}
+The implementation stores symmetric $J$ with zero diagonal.  Each clause adds $1/4$ to $C_0$, $-a/4$ and $-b/4$ to its linear coefficients, and $ab/4$ to both $J_{ij}$ and $J_{ji}$.  The upper-triangular energy sum counts each pair once; the symmetric row gives the local field.  Consequently, $\mathcal E_{\mathrm{2SAT}}/k_w$ is exactly the unsatisfied-clause count.
+
+The initial exploratory study allowed the optimizer to co-select clause weight $k_w$ and response coefficient $\rho$.  Figures~\ref{figS:initial-dist} and \ref{figS:initial-alpha} retain those observations for transparency, but they are not evidence for an independent response-memory effect.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.84\textwidth]{FigS_2SAT_initial_mode_distribution.pdf}
+\caption{Mode distribution from the initial jointly optimized 2-SAT study.  This result is descriptive because $k_w$ and response memory were coupled in optimization.}
+\label{figS:initial-dist}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.84\textwidth]{FigS_2SAT_initial_rho_vs_alpha.pdf}
+\caption{Selected response coefficient $\rho$ versus clause density in the initial jointly optimized study.  The apparent density trend is superseded by the matched-$k_w$ causal control.}
+\label{figS:initial-alpha}
+\end{figure}
+
+The matched-$k_w$ control fixes $N=500$, $\alpha=1.20$, the same 30 formulas (13 satisfiable, 17 unsatisfiable), 100 paired trials per formula and cell, and 3000 cycles.  It evaluates $k_w\in\{4,8,12,16,20\}$ and $\rho\in\{0,0.02,0.04,0.06,0.08,0.12\}$ with all remaining parameters fixed.  Table~\ref{tabS:2satgrid} gives the all-formula mean selected unsatisfied-clause rate.  In every row, $\rho=0$ is best; the global minimum is $k_w=8,\rho=0$.  Rows $k_w=12,16,20$ are numerically identical at the displayed precision, excluding a hidden improvement at the earlier $k_w$ search boundary.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.90\textwidth]{FigS_2SAT_matched_kw_slices.pdf}
+\caption{Matched-$k_w$ random 2-SAT response-memory control.  Nonzero $\rho$ causes an approximately monotone degradation for every $k_w$.}
+\label{figS:matchedslices}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.76\textwidth]{FigS_2SAT_matched_kw_heatmap.pdf}
+\caption{Matched-$k_w$ random 2-SAT response surface.  The memoryless $\rho=0$ edge contains the optimum for every clause weight.}
+\label{figS:matchedheatmap}
+\end{figure}
+
+\begin{table}[ht]
+\caption{Mean selected unsatisfied-clause rate in the matched-$k_w$ response surface.}
+\label{tabS:2satgrid}
+\begin{ruledtabular}
+\begin{tabular}{c@{\quad}cccccc}
+$k_w\backslash\rho$ & 0 & 0.02 & 0.04 & 0.06 & 0.08 & 0.12 \\
+\hline
+4  & 0.0022311 & 0.0022422 & 0.0022578 & 0.0022733 & 0.0023039 & 0.0023756 \\
+8  & 0.0021067 & 0.0021194 & 0.0021233 & 0.0021439 & 0.0021506 & 0.0021650 \\
+12 & 0.0021122 & 0.0021244 & 0.0021267 & 0.0021494 & 0.0021517 & 0.0021678 \\
+16 & 0.0021122 & 0.0021244 & 0.0021267 & 0.0021494 & 0.0021517 & 0.0021678 \\
+20 & 0.0021122 & 0.0021244 & 0.0021267 & 0.0021494 & 0.0021517 & 0.0021678 \\
+\end{tabular}
+\end{ruledtabular}
+\end{table}
+
+The predeclared primary contrast is $k_w=16$, $\rho=0.08$ versus 0.  Mean rate changes from 0.00211222 to 0.00215167: treatment minus control is $+3.944\times10^{-5}$ with formula-bootstrap interval $[1.333,6.611]\times10^{-5}$.  This equals 0.02367 additional unsatisfied clauses per trial or a 1.867\% worsening.  Formula-wise counts are 8 improved, 17 worsened, and 5 tied; paired standardized effect $d_z=0.519$.  Terminal unsatisfied rate worsens by 11.35\%.
+
+SAT success changes by $-1.46$ percentage points with interval $[-3.77,+0.46]$ percentage points.  Among unsatisfiable formulas, selected unsatisfied-clause rate increases by $4.804\times10^{-5}$ with interval $[0.882,8.627]\times10^{-5}$.  Neither stratum provides positive response-memory evidence.  Because the predeclared primary test did not support a positive effect, the prespecified lower-density extension was not performed, and no $\alpha$ dependence is claimed.
+
+\section{Validation and invariant tests}
+\label{secS:validation}
+
+The following invariants were checked before statistical analysis and inclusion in the reported results:
+\begin{enumerate}
+\item At $\lambda=0$, \psa{}, additive, normalized, and gain-only kernels produce identical trajectories for shared random streams and matched parameters.
+\item At $\rho=0$, finite-response dynamics are trajectory-identical to \psa{} with matched parameters.
+\item At $\kappa=0$, binary-state self-feedback is trajectory-identical to matched \psa{} under common random streams; the implementation uses the pre-update/current bit state and allocates no separate response state.
+\item Independent additive implementations agree throughout the common evaluated coefficient range.
+\item Logged trajectory endpoints reproduce the high-statistics control implementation outputs bit for bit for all nonshuffled variants.
+\item The shuffled mapping is a derangement, has no self-links, and preserves delayed-response mean and second moment to numerical precision.
+\item The arbitrary-start event kernel exactly reproduces the existing all-zero event kernel when supplied the all-zero state.  For alternative starts, bit-state, channel, and transmitted-word hashes match across the four paired methods, and every response state begins at zero.
+\item All cross-code matrices satisfy requested row/column degrees, GF(2) rank checks, rate checks, and stored SHA-256 identities.  The pSA-specific dictionaries match the independently optimized representative-code selections, have zero memory coefficients, and remain fixed across all ten matrices at each size.
+\item The binary-state high-statistics records reproduce the selected and $N=192$ sensitivity configurations, and the score/BER/FER selection audit agrees at $N=96$ and 288 while preserving the prespecified $N=192$ score selection separately.
+\item The matched-$k_w$ 2-SAT control uses the same formula list and paired seed streams in every $\rho$ slice at fixed $k_w$; formula identities and satisfiability labels were verified.
+\item Reported cross-code intervals resample codes, initialization-acquisition intervals use ten paired seed-batch means, and matched-$k_w$ 2-SAT intervals resample formulas.  None treats bits as independent instances for the corresponding claim.
+\end{enumerate}
+
+For implementation provenance, the optimized LDPC Numba path for the memoryless, additive, normalized-memory, and gain-only rules samples holding first and skips held candidates, whereas vectorized finite-response LDPC and cross-problem paths form candidates before masking.  For a fixed rule, the two orderings are transition-law equivalent but consume pseudorandom numbers differently, so equal seeds across paths need not yield identical trajectories.  The public release will document these paths and provide scripts, dependencies, parameters, seeds, metadata, checksums, binary-state-control records, three-arm transfer records, initialization-validation records, and reproduction commands; repository and release identifiers will be added when available.
+
+\end{document}

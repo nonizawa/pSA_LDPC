@@ -1,0 +1,8 @@
+name: memory-pbit-reproduction
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10.7
+  - pip
+  - pip:
+      - -r requirements.txt

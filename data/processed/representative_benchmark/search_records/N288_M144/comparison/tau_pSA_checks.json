@@ -1,0 +1,6 @@
+{
+  "H_eff_from_Itanh_hold_prev": true,
+  "jacobi_parallel_update": true,
+  "parity_sum_from_w_prev": true,
+  "response_lambda_zero_matches_pSA": true
+}

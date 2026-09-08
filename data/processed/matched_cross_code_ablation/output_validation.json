@@ -1,0 +1,11 @@
+{
+  "actual_row_count": 1800,
+  "all_passed": true,
+  "expected_row_count": 1800,
+  "paired_modes_ok": true,
+  "row_count_ok": true,
+  "selected_matrix_count": 30,
+  "unique_key_count": 1800,
+  "unique_keys_ok": true,
+  "value_ranges_ok": true
+}

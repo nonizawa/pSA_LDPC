@@ -1,0 +1,5 @@
+condition_id,size,anchor,variant,implementation_mode,lambda_mem,trials_per_ebno,n_cycles,estimated_bit_updates
+1,N192_M96,lambda,pSA,pSA,0.0,10000,19200,110592000000
+2,N192_M96,lambda,additive,lambda_pSA,0.95,10000,19200,110592000000
+3,N192_M96,lambda,normalized,lambda_pSA_normalized,0.95,10000,19200,110592000000
+4,N192_M96,lambda,gain_only,gain_only_pSA,0.95,10000,19200,110592000000

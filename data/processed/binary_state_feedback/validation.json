@@ -1,0 +1,98 @@
+{
+  "all_equal_range_checks_passed": true,
+  "all_nonmemory_parameters_readout_matrix_snr_seed_framework_identical": true,
+  "all_passed": true,
+  "binary_state_timing": "common pre-update/current state w_prev copied at cycle start; active-bit candidate uses the same bit w_prev[bit]",
+  "control_label": "Binary-State Self-Feedback Control",
+  "equal_range_at_kappa_equals_selected_lambda": {
+    "N192_M96": {
+      "additive_deterministic_range": [
+        -1.95,
+        1.95
+      ],
+      "binary_deterministic_range": [
+        -1.95,
+        1.95
+      ],
+      "equal": true,
+      "kappa_equals_lambda": 0.95
+    },
+    "N288_M144": {
+      "additive_deterministic_range": [
+        -1.9,
+        1.9
+      ],
+      "binary_deterministic_range": [
+        -1.9,
+        1.9
+      ],
+      "equal": true,
+      "kappa_equals_lambda": 0.9
+    },
+    "N96_M48": {
+      "additive_deterministic_range": [
+        -1.95,
+        1.95
+      ],
+      "binary_deterministic_range": [
+        -1.95,
+        1.95
+      ],
+      "equal": true,
+      "kappa_equals_lambda": 0.95
+    }
+  },
+  "equation": "d_i^(t)=q_i^(t)+kappa*s_i^(t), s_i^(t)=2*w_i^(t)-1",
+  "held_bit_semantics": "hold is sampled before q/threshold; held bit retains w and needs no separate memory commit",
+  "kappa_zero_decoded_match_vector": [
+    true,
+    true,
+    true
+  ],
+  "kappa_zero_decoded_matches_core_pSA_all_test_seeds": true,
+  "kappa_zero_state_history_trajectory_identical": true,
+  "kappa_zero_threshold_discriminants_trajectory_identical": true,
+  "manuscript_spin_mapping": "s_i^(t)=x_i^(t)=2*w_i^(t)-1; b=1 maps to +1",
+  "matched_parameter_validation": {
+    "N192_M96": {
+      "highstat_seed_batches_identical": true,
+      "highstat_trials_per_EbNo_identical": true,
+      "matrix_seed_is_zero": true,
+      "nonmemory_parameter_mismatches": {},
+      "nonmemory_parameters_identical": true,
+      "readout_identical": true,
+      "snr_grid_identical": true,
+      "source_parameter_file": "source_project/paper_results_trip/ldpc/N192_M96/lambda_pSA/memory_sweep_summary.csv"
+    },
+    "N288_M144": {
+      "highstat_seed_batches_identical": true,
+      "highstat_trials_per_EbNo_identical": true,
+      "matrix_seed_is_zero": true,
+      "nonmemory_parameter_mismatches": {},
+      "nonmemory_parameters_identical": true,
+      "readout_identical": true,
+      "snr_grid_identical": true,
+      "source_parameter_file": "source_project/paper_results_trip/ldpc/N288_M144/lambda_pSA/memory_sweep_summary.csv"
+    },
+    "N96_M48": {
+      "highstat_seed_batches_identical": true,
+      "highstat_trials_per_EbNo_identical": true,
+      "matrix_seed_is_zero": true,
+      "nonmemory_parameter_mismatches": {},
+      "nonmemory_parameters_identical": true,
+      "readout_identical": true,
+      "snr_grid_identical": true,
+      "source_parameter_file": "source_project/paper_results/ldpc/N96_M48/lambda_pSA/memory_sweep_summary.csv"
+    }
+  },
+  "not_a_PIMI_reproduction": true,
+  "production_binary_kernel_has_no_response_history_array": true,
+  "production_binary_kernel_state_arrays": [
+    "w (binary state)",
+    "readout accumulators only"
+  ],
+  "spin_mapping_binary_one_to_plus_one": true,
+  "spin_mapping_binary_zero_to_minus_one": true,
+  "trajectory_binary_arm_ignores_q_prev_in_update": true,
+  "trajectory_logger_contains_binary_variant_code_5": true
+}

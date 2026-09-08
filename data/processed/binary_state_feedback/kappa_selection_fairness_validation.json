@@ -1,0 +1,66 @@
+{
+  "all_passed": true,
+  "checks": {
+    "additive_reference_values_read_only": true,
+    "binary_state_equation_unchanged": true,
+    "both_targets_case_A": true,
+    "both_targets_have_complete_9_point_grid": true,
+    "both_targets_score_selected_equals_BER_best": true,
+    "both_targets_score_selected_equals_FER_best": true,
+    "existing_input_files_unchanged_by_audit": true,
+    "kappa_zero_equivalence_logic_still_validated": true,
+    "manuscript_hashes_unchanged": true,
+    "no_new_simulation_performed": true,
+    "nonmemory_parameters_readout_H_seed_channel_framework_still_validated": true,
+    "original_final_audit_all_passed": true,
+    "original_validation_all_passed": true
+  },
+  "created_utc": "2026-08-30T09:39:28.864472+00:00",
+  "input_sha256": {
+    "BINARY_STATE_SELF_FEEDBACK_REPORT.md": "3ecf0e1d57788655b262c01cce808eadb45f017745820713a39d39399e33989f",
+    "ber_optimal_sensitivity_by_ebno.csv": "62e7ce1decf229a26450cd5b89585abb86c56c08077966e2a85713995f7cc828",
+    "ber_optimal_sensitivity_paired_statistics.csv": "591a49b33343059709ebf66cc1d03c76acd6f8de4ef568101404f88fa1073456",
+    "best_kappa_selection.csv": "d43efc6100a7c89b20ef0db05a33269d37b71b0264d82ae32ea23750f131faba",
+    "equal_range_summary.csv": "2aa3ba754261b2f93bcf0efd1b935e4eaa3a2b6989efc37057b6e73d155923b8",
+    "final_audit.json": "63d55aee3c0206dbd78d189893bc37750a4a93de0c972d114cdd0b57ee64671d",
+    "highstat_ber_fer.csv": "909b15141f3a9e87f0a94222703ba4ebf9d57ed890d4b74e97557f6030a0ff08",
+    "kappa_sweep.csv": "732b2855386dd866c2041256e67eaf5df0386a1792b0d4a85d82d5604062356d",
+    "kappa_sweep_by_ebno.csv": "467bfc4418b798146eee3f9e2fd53c010875d5d09329c833c4d4eaf1ff002d26",
+    "kappa_sweep_by_seed.csv": "44c43e11595cb5ba84ccf005f080c97681ffa3ed8deff62a14646f20742be251",
+    "paired_statistics.csv": "ad6a850eb6f1822aa2274653204c4d3a63e0f4f82d9808297443b4a0b5dbd850",
+    "parameter_config_record.json": "d7a0f9872e401b18151bc40e98d1a28437fc94280a4f0aafa04521085e0f4788",
+    "validation.json": "41c6550bacee2862d32b867547b19ff1e8696686a913aea1c687b5ae15cc8b3b"
+  },
+  "manuscript_sha256": {
+    "main.pdf": "deccee4f585efe3e2152680f5a057a49f6ce09e10410bd5f34ac691f96be8549",
+    "main.tex": "daf16f0212ee726e7e1efe0ee400ebb9f85455a81ac91163bc6d48535b59ab6b",
+    "supplement.pdf": "c4c8ef8049d7e2210c68f875070140485ad0a9a23d03787efb8a19b5db86e21c",
+    "supplement.tex": "fd15ecd31396e8c89e251bba06ba5aeadd1af6ec94d000031c62fa46d391977e"
+  },
+  "outputs": [
+    "KAPPA_SELECTION_FAIRNESS_AUDIT.md",
+    "kappa_selection_fairness_all_kappa.csv",
+    "kappa_selection_fairness_summary.csv",
+    "kappa_selection_fairness_paired_differences.csv",
+    "kappa_selection_fairness_validation.json"
+  ],
+  "study": "Kappa-Selection Fairness Audit",
+  "target_classifications": {
+    "N288_M144": {
+      "BER_best_kappa": 0.75,
+      "FER_best_kappa": 0.75,
+      "classification": "CASE A",
+      "publication_kappa": 0.75,
+      "score_selected_kappa": 0.75,
+      "targeted_highstat_required": false
+    },
+    "N96_M48": {
+      "BER_best_kappa": 0.25,
+      "FER_best_kappa": 0.25,
+      "classification": "CASE A",
+      "publication_kappa": 0.25,
+      "score_selected_kappa": 0.25,
+      "targeted_highstat_required": false
+    }
+  }
+}

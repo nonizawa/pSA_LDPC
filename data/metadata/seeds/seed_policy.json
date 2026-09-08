@@ -1,0 +1,14 @@
+{
+  "LDPC_representative_matrix_seed": 0,
+  "LDPC_seed_batch_count": 10,
+  "LDPC_seed_batch_stride": 8022,
+  "LDPC_stochastic_base_seed": 20260826,
+  "cross_code_matrix_seeds": "listed in metadata/matrices/matrix_registry.csv",
+  "paired_streams": {
+    "cross_code_transfer": true,
+    "matched_controls": true,
+    "matched_kw_2SAT": true
+  },
+  "random_2SAT_formula_seeds": "listed in metadata/formulas/formula_registry.csv",
+  "random_2SAT_trial_seed_rule": "17000000 + round(alpha*1000)*100000 + formula_index*1000 + trial_index"
+}
