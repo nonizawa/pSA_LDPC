@@ -2,8 +2,8 @@
 
 Payload measurement excludes this size report and the two generated integrity manifests.
 
-- Payload: 90,587,554 bytes (86.391 MiB)
-- Payload files: 799
+- Payload: 90,588,843 bytes (86.392 MiB)
+- Payload files: 800
 
 | Area | Bytes | MiB |
 |---|---:|---:|

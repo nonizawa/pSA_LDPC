@@ -2,7 +2,7 @@
 
 Reproducibility package for the manuscript of the same title by Naoya Onizawa, Research Institute of Electrical Communication, Tohoku University.
 
-**Manuscript status:** prepared for submission to *Physical Review Applied*. This is a local release candidate. It has not been published, pushed to GitHub, assigned a DOI, or deposited in Zenodo.
+**Manuscript status:** prepared for submission to *Physical Review Applied*; not yet accepted or published. The package is publicly available at [nonizawa/pSA_LDPC](https://github.com/nonizawa/pSA_LDPC). Metadata are prepared for the planned `v1.0.0` release; the formal release and Zenodo deposit remain pending. No archive DOI has been assigned.
 
 ## Overview
 
@@ -39,8 +39,8 @@ See [docs/REPOSITORY_STRUCTURE.md](docs/REPOSITORY_STRUCTURE.md) for details.
 ## Quick start
 
 ```bash
-git clone <REPOSITORY_URL>
-cd <REPOSITORY_DIRECTORY>
+git clone https://github.com/nonizawa/pSA_LDPC.git
+cd pSA_LDPC
 python3.10 -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements.txt
@@ -102,6 +102,10 @@ GitHub contains source code, configs, matrices/formulas, complete representative
 
 ## Citation and license
 
-Citation metadata are in `CITATION.cff`. DOI, repository URL, journal volume/pages, and publication date are intentionally absent.
+Citation metadata and the repository URL are in [CITATION.cff](CITATION.cff). Until an archived release is available, identify the exact Git commit used when citing this package. Archive DOI and final journal metadata will be added when available.
 
-No license was present in the source project. **A license must be selected by the author before public release.** See [LICENSE_RECOMMENDATION.md](LICENSE_RECOMMENDATION.md). A public contact address also remains to be supplied: `<PUBLIC_CONTACT_EMAIL>`.
+**Licensing is pending author approval.** Public visibility does not constitute a software or data reuse license. Finalize the licenses before the formal release and Zenodo deposit; see [LICENSE_RECOMMENDATION.md](LICENSE_RECOMMENDATION.md).
+
+## Contact
+
+For questions or reproducibility issues, use [GitHub Issues](https://github.com/nonizawa/pSA_LDPC/issues). Do not post credentials or private data.

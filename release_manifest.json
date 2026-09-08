@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
-  "generated_utc": "2026-09-07T10:12:35+00:00",
+  "generated_utc": "2026-09-08T05:32:04+00:00",
   "package_label": "github_public_release_20260907",
   "manuscript_revision_label": "pra_manuscript_supplement_visual_cleanup_20260907",
-  "file_count_excluding_manifests": 800,
-  "total_bytes_excluding_manifests": 90590522,
+  "file_count_excluding_manifests": 801,
+  "total_bytes_excluding_manifests": 90591811,
   "files": [
     {
       "path": ".gitignore",
@@ -14,8 +14,8 @@
     },
     {
       "path": "CITATION.cff",
-      "bytes": 990,
-      "sha256": "56222b485904f62302cdf4ea12f99ea3fa2421a3ec9e025a267cebbd04bdf66d",
+      "bytes": 1042,
+      "sha256": "f73378d553961b4398e86d4a0172974888efb9dd9e045e714fb8ae9f5e252d9a",
       "role": "release metadata"
     },
     {
@@ -26,20 +26,26 @@
     },
     {
       "path": "GITHUB_UPLOAD_INSTRUCTIONS.md",
-      "bytes": 1542,
-      "sha256": "a246b95cb150960dbc36dd13014572f58313d33a929faf13ce6a3ba4a728dfd5",
+      "bytes": 1777,
+      "sha256": "78c3233c06d437a7e5b0e2c29eecbfade8a0608173c65f3d11dbf3c5fa64c5b6",
       "role": "release metadata"
     },
     {
       "path": "LICENSE_RECOMMENDATION.md",
-      "bytes": 1349,
-      "sha256": "32dd4d8c290365407e9cc4de3a5d3e44f2b3a7b540f35ee69a4309cf7544b134",
+      "bytes": 1380,
+      "sha256": "f401bbdd8227df98bcc0d2439f0250b84a288f7869768a8e4c751636ef1d2082",
+      "role": "release metadata"
+    },
+    {
+      "path": "PUBLIC_METADATA_CLEANUP.md",
+      "bytes": 544,
+      "sha256": "c7c88b4f5d8e86d8b508b87c07191c98dafeae98681c5886cc508bfd7a868229",
       "role": "release metadata"
     },
     {
       "path": "PUBLIC_PACKAGE_SIZE_AUDIT.md",
       "bytes": 2968,
-      "sha256": "fa01cc9cbc0d99f14f156a9a2e84705aecd388f64df595b116b7a1d4664df642",
+      "sha256": "d96c2e573b0fbf0c0553881c568190d07b9432393cb40eeda2ebb3a5d200c2b0",
       "role": "release metadata"
     },
     {
@@ -50,8 +56,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 7385,
-      "sha256": "17ecfd29ba0c9d8487f54e94e31bbb0e787cd4e4498bd10a071c4568c89fd39f",
+      "bytes": 7812,
+      "sha256": "78b08a4a14a7145472937c936acd16c22c00fe29bbe7e3dd2127e0e9c285ab3c",
       "role": "release metadata"
     },
     {

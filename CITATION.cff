@@ -2,7 +2,8 @@ cff-version: 1.2.0
 message: "If you use this software or data, please cite the accompanying manuscript. Journal and DOI metadata will be added after publication."
 title: "Reproducibility package for Bit-Aligned Temporal Reinforcement in Probabilistic-Bit Dynamics for Robust LDPC Decoding"
 type: software
-version: 1.0.0-rc1
+version: 1.0.0
+repository-code: "https://github.com/nonizawa/pSA_LDPC"
 authors:
   - family-names: Onizawa
     given-names: Naoya
